@@ -5,6 +5,22 @@ Wszystkie istotne zmiany w hubie sa odnotowywane w tym pliku.
 Format zgodny z [Keep a Changelog 1.1.0](https://keepachangelog.com/pl/1.1.0/).
 Wersjonowanie: CalVer dla calego hubu (`YYYY.MM.DD`), SemVer per-skill.
 
+## [2026.10.13b] - 2026-10-13
+
+### Changed
+
+- `let-it-be` 0.8.0 (`dokumenty` 1.13.0) - kopia zsynchronizowana z kanonem
+  `matematic-anonimizacja-pl` (`52d1782`):
+  - numer ze zla suma kontrolna (PESEL, NIP, REGON, IBAN) jest maskowany i oznaczony do
+    przegladu (`walidacjaSumy`, `doPrzegladu`), takze bez etykiety i przy cyfrze za malo
+    lub za duzo po etykiecie; do 0.7.0 PESEL z literowka bez etykiety zostawial 2 cyfry jawne;
+  - kwoty ("152 422 384,00 zl", "600 700 800 PLN") nie sa juz brane za telefon;
+  - CLI czyta zapisany plik od nowa i sprawdza go (oryginaly w tekscie i bajtach, tokeny,
+    ponowna detekcja); BLOKADA usuwa pliki;
+  - `ewaluacja/sprawdzian_numerow.mjs` i kontrola negatywna w testach (58 -> 113 testow).
+  Wzorce (idea, bez kodu) z ocen poufnika (Apache-2.0) i cenzora (MIT) - atrybucja w
+  THIRD_PARTY_INSPIRATIONS.md skilla.
+
 ## [2026.10.13] - 2026-10-13
 
 ### Added
