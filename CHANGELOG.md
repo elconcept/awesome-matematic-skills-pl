@@ -5,6 +5,24 @@ Wszystkie istotne zmiany w hubie sa odnotowywane w tym pliku.
 Format zgodny z [Keep a Changelog 1.1.0](https://keepachangelog.com/pl/1.1.0/).
 Wersjonowanie: CalVer dla calego hubu (`YYYY.MM.DD`), SemVer per-skill.
 
+## [2026.10.13c] - 2026-10-13
+
+### Changed
+
+- `humanizer-pl` 1.5.0 (`jakosc-tresci` 1.3.0) - minimalna ingerencja: zmienia tylko to, co
+  naprawde zgrzyta, i pilnuje, zeby tresc przetrwala przepisanie:
+  - **inwentarz przed przepisaniem** i sekcja "czego nie wolno zmienic": wartosci, sila
+    normy, pewnosc, powody i warunki, kto co robi, terminy prawne i zdefiniowane;
+    "brak zmiany to poprawny wynik";
+  - **tryb rejestru prawniczego**: w umowach i pismach terminy zdefiniowane, strona bierna
+    w opisie stanu prawnego i tiret zostaja, reszta jest wskazywana, nie przepisywana;
+  - **bramka `scripts/audyt_po_przepisaniu.py`** (stdlib, bez sieci): wartosci wrazliwe,
+    profil deontyczny, pewnosc, slady czatu, terminy chronione i zdefiniowane, limit
+    skrocenia; trojstan OK/UWAGI/BLOKADA z pelnym mianownikiem; testy w `tests/`
+    widziane najpierw na czerwono;
+  - #7, #13 i #14 reaguja na skupienie, nie na pojedynczy sygnal; #30-#34 jako reguly
+    redakcyjne, bez liczb i obietnic o detektorach.
+
 ## [2026.10.13b] - 2026-10-13
 
 ### Changed

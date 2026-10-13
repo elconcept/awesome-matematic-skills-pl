@@ -133,7 +133,7 @@ Narzedzia redakcyjne, neutralne tematycznie, bez konektorow. Zmieniaja slowa, ni
 
 | Skill | Opis | Licencja | Wersja |
 |---|---|---|---|
-| [<img src="./assets/badge-humanizer-pl.svg" alt="Pisz po ludzku" width="200" height="60">](./jakosc-tresci/skills/humanizer-pl) | Usuwa wzorce AI-slop z polskiego tekstu (43 wzorce), w tym sygnatury statystyczne wykrywane przez detektory, tryb dokumentacja i pisownie sprzed reformy RJP 2026. | MIT | 1.3.0 |
+| [<img src="./assets/badge-humanizer-pl.svg" alt="Pisz po ludzku" width="200" height="60">](./jakosc-tresci/skills/humanizer-pl) | Usuwa wzorce AI-slop z polskiego tekstu (43 wzorce), tryb dokumentacja, tryb rejestru prawniczego i pisownie sprzed reformy RJP 2026. Minimalna ingerencja: bramka po przepisaniu pilnuje dat, kwot, przepisow, sily normy i terminow prawnych. | MIT | 1.5.0 |
 | [<img src="./assets/badge-marko-pl-content.svg" alt="Marko-PL" width="200" height="60">](./jakosc-tresci/skills/marko-pl-content) | Zrzedliwy senior redaktor - werdykt (katastrofa/slabe/przecietne/ok) + lista zarzutow z `plik:linia`. Wskazuje co zle, nie przepisuje. Skaner pisowni sprzed reformy RJP 2026. | MIT | 1.1.1 |
 
 ### Plugin `ochrona-danych` (operacje RODO dla kancelarii i IOD)
