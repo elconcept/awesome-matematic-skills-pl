@@ -74,7 +74,7 @@
     {
       "name": "jakosc-tresci",
       "description": "Narzedzia jakosci tekstu polskiego (2 skille): humanizer-pl (usuwa wzorce AI-slop i pisownie sprzed reformy RJP 2026, minimalna ingerencja z bramka po przepisaniu: daty, kwoty, przepisy, sila normy, terminy prawne) i marko-pl-content (zrzedliwy senior redaktor, werdykt + zarzuty z plik:linia, w tym pisownia sprzed reformy RJP 2026 ze skanerem). Zmienia slowa, nigdy faktow. Bez konektorow, bez wlasnych polaczen wychodzacych.",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "author": {
         "name": "Wieslaw Mazur / MateMatic"
       },

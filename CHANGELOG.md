@@ -5,6 +5,19 @@ Wszystkie istotne zmiany w hubie sa odnotowywane w tym pliku.
 Format zgodny z [Keep a Changelog 1.1.0](https://keepachangelog.com/pl/1.1.0/).
 Wersjonowanie: CalVer dla calego hubu (`YYYY.MM.DD`), SemVer per-skill.
 
+## [2026.10.13d] - 2026-10-13
+
+### Fixed
+
+- `humanizer-pl` 1.5.1 (`jakosc-tresci` 1.3.1) - bramka po przepisaniu: znacznik
+  `[do uzupelnienia: ...]`, ktory skill kaze wstawiac zamiast zgadywac, dawal falszywa
+  BLOKADE wartosci ("pojawilo sie: pole"), a dluzszy niz 60 znakow w ogole nie blokowal
+  gotowosci tekstu. Teraz nie jest wartoscia, ale zawsze oznacza tekst niegotowy.
+  Do tego trzy falszywe alarmy znalezione przy pomiarze edycji EN i PT: skrot przepisu
+  rozpoznawany w koncowce zwyklego wyrazu, przypis "[1]" brany za pole do
+  wypelnienia oraz limit skrocenia liczony razem z otoczka czatu (model zostawial wate,
+  zeby zmiescic sie w limicie). Piec nowych testow, kazdy widziany najpierw na czerwono.
+
 ## [2026.10.13c] - 2026-10-13
 
 ### Changed
