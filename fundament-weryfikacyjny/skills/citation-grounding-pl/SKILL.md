@@ -7,7 +7,7 @@ description: >
   źródłowym, czy sygnatura jest realna i czy parafraza oddaje stanowisko sądu,
   zamiast wierzyć modelowi "na oko". Przeciwdziała halucynacjom modelu (w tym
   problemowi "prawdziwy-cytat-fałszywa-teza"), RODO-safe (działa lokalnie), spina
-  się z saos-orzecznictwo, szukaj-orzeczen-v2 i eu-sparql-search. Używaj gdy:
+  się z saos-orzecznictwo i eu-sparql-search. Używaj gdy:
   weryfikacja cytatów w opinii prawnej / memo / piśmie procesowym, sprawdzenie czy
   AI nie zmyśliło fragmentu wyroku, przepisu lub sygnatury, czy parafraza nie
   przekręca holdingu, kontrola cytatu przed wysłaniem deliverable do klienta,
@@ -38,8 +38,8 @@ attribution:
       Guard STRONY oparty na niezgodności nazw metodą Jaccarda (v2.1). Stop-listy własne.
 metadata:
   author: Wiesław Mazur / MateMatic
-  version: 2.5.0
-  companion_skills: saos-orzecznictwo, szukaj-orzeczen-v2, eu-sparql-search, legal-ai-audit-bundle, adversarial-legal-review-pl, deliverable-fidelity-pl, legal-request-router-pl
+  version: 2.6.0
+  companion_skills: saos-orzecznictwo, eu-sparql-search, legal-ai-audit-bundle, adversarial-legal-review-pl, deliverable-fidelity-pl, legal-request-router-pl
 ---
 
 # Citation Grounding PL - mechaniczny weryfikator cytatu (gradient)
@@ -123,7 +123,7 @@ oznacz je `claim_type` i poddaj weryfikacji na właściwym poziomie. Bez cudzys�
 ## Workflow
 
 1. **Zbierz źródła i rozwiąż kotwice** - tekst dokumentu źródłowego dostępny lokalnie:
-   - Orzeczenia: `saos-orzecznictwo` / `szukaj-orzeczen-v2` (zwracają też datę i organ → kotwica)
+   - Orzeczenia: `saos-orzecznictwo` (zwraca też datę i organ → kotwica)
    - Akty EU: `eu-sparql-search` (CELEX → kotwica)
    - Ustawy PL / umowy / pisma: dostarcza użytkownik (.txt/.md/.docx → markitdown)
    - Gdy bezpośredni fetch zawiedzie, pracuj **drabinkę źródeł**: `references/drabinka-zrodel-pl.md`
@@ -286,7 +286,7 @@ do `legal-ai-audit-bundle` obok deliverable.
   zero-cloud; z repo bierzemy tylko lokalną, jurysdykcyjnie-neutralną heurystykę nazw stron.
 - Kontrakt generacyjny (v2.2): trójklasa znakowania przy generacji (Zweryfikowane / Do sprawdzenia /
   Nie używać, tag przy linii, fail-closed dla klasy 3) - adaptacja „kolmiportainen varmuusmerkintä"
-  z `akunikkola/claude-for-legal-finland` (MIT, `references/viittaustyyli.md`). Stamtąd też lekcja
+  z `akunikkola/claude-for-legal-finland` (MIT, [references/viittaustyyli.md](https://github.com/akunikkola/claude-for-legal-finland/blob/main/references/viittaustyyli.md)). Stamtąd też lekcja
   dyscypliny placeholderów w przykładach (audyt siostrzanego projektu DE: ~58% złych sygnatur).
 - Dyskonto języka szablonowego (v2.3): wzorzec `COMMON_LEGAL_PHRASES` z `AnttiHero/lavern`
   (Apache 2.0, `src/mcp/tools/grounding-verifier.ts`) - trafiona fraza-wytrych liczy się 0.5 zamiast
@@ -304,3 +304,35 @@ do `legal-ai-audit-bundle` obok deliverable.
   ich biblioteka to dyscyplina promptowa pod web_fetch publicznych archiwów; tutaj to mechaniczny
   silnik string-match pod lokalne źródła PL (RODO, zero-egress). Kod, prompty i reguły normalizacji
   napisane od zera pod polskie realia (cudzysłowy „…", sygnatury SN/NSA/TSUE, CELEX).
+
+<!-- shared-rules:begin (wygenerowane z ../../SHARED-RULES.md przez scripts/shared-rules-sync.py - nie edytuj tutaj) -->
+## Wspólne reguły wtyczki fundament-weryfikacyjny (Fundament weryfikacyjny)
+
+Te reguły obowiązują w każdym skillu tej wtyczki, także gdy sam skill milczy. Są skopiowane do każdego skilla, więc działają zarówno po instalacji całej wtyczki, jak i pojedynczego skilla. Pełniejszy standard: https://github.com/matematicsolutions/awesome-matematic-skills-pl/tree/main/references
+
+### Pięć warstw ochrony (przed każdym disclaimerem)
+
+1. **Weryfikacja źródła** - przepisy i orzecznictwo z baz, nie z pamięci modelu.
+2. **Klasa pewności** - każda teza prawna oznaczona: zweryfikowane / do sprawdzenia / nie używać.
+3. **Kontrola przesłanek** - fakty od użytkownika sprawdza się przed analizą.
+4. **Jawny zakres ujemny** - każdy skill mówi, czego NIE robi.
+5. **Bramka człowieka** - uprawniona osoba sprawdza i zatwierdza wynik.
+
+Jeśli błąd przeszedłby bez zatrzymania przez warstwy 1-5, wina jest w skillu. Naprawiamy narzędzie, nie dopisujemy noty. Nota "to nie porada prawna" nie zatrzymuje błędu i nie przenosi odpowiedzialności.
+
+### Tagi pewności
+
+- **Zweryfikowane** - źródło sprawdzone w sesji, z pełną sygnaturą: `(kodeks cywilny art. 415)`, `(wyrok SN II CSK NN/RR, SAOS)`.
+- **Do sprawdzenia** - prawdopodobne, niezweryfikowane: `[sprawdź w SAOS]`.
+- **Nie używać** - zmyślona sygnatura lub przepis. Pomiń, nigdy nie wymyślaj numeru.
+
+Tag stoi przy linii, której dotyczy. Samo istnienie sygnatury nie wystarcza - treść trzeba sprawdzić.
+
+### Bramka człowieka
+
+Nic nie zostaje wysłane, złożone, podpisane ani opublikowane, zanim sprawdzi i zatwierdzi to uprawniony człowiek. Wynik skilla to projekt, nie gotowy dokument.
+
+### Zakres pluginu
+
+Fundament weryfikacyjny jest neutralny jurysdykcyjnie - to rdzeń metody, nie substancja prawa. Nie łączy się z żadnym źródłem zewnętrznym (brak konektorów MCP) i nie wysyła danych na zewnątrz. Substancję dostarczają osobne pluginy (orzecznictwo, dokumenty).
+<!-- shared-rules:end -->

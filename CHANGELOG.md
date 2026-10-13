@@ -5,6 +5,216 @@ Wszystkie istotne zmiany w hubie sa odnotowywane w tym pliku.
 Format zgodny z [Keep a Changelog 1.1.0](https://keepachangelog.com/pl/1.1.0/).
 Wersjonowanie: CalVer dla calego hubu (`YYYY.MM.DD`), SemVer per-skill.
 
+## [2026.10.13e] - 2026-10-13
+
+### Added
+
+- `matematic-mcp-fastmcp-instructions-pl` (`dev-mcp`): kanon 6b (kod niesie `retryable` i
+  okno odnowienia, tabela przy zrodle, test w obie strony) wraca do huba z kopii roboczej, plus
+  nowa sekcja **6c**: os `fault` (caller / upstream / network / server), `internal_error` dla
+  bledu konektora, `forbidden` = przeglad czlowieka, HTTP 200 z nie-danymi (zapora, przerwa
+  techniczna, pusta odpowiedz) jako nazwany kod, `partial_result` z „jak uzupelnic" i zdaniem
+  „Wynik niepelny" na czele odpowiedzi, wspolny hamulec klienta i test zywy z pelnym
+  mianownikiem. Wzorce z ocen leniwyposel/sejm-mcp, PawelHaracz/polish-caselaw-mcp i
+  soba-labs/krs-mcp (idea, kod od zera). Wtyczka `dev-mcp` 1.1.0 -> 1.2.0.
+
+## [2026.10.13d] - 2026-10-13
+
+### Fixed
+
+- `humanizer-pl` 1.5.1 (`jakosc-tresci` 1.3.1) - bramka po przepisaniu: znacznik
+  `[do uzupelnienia: ...]`, ktory skill kaze wstawiac zamiast zgadywac, dawal falszywa
+  BLOKADE wartosci ("pojawilo sie: pole"), a dluzszy niz 60 znakow w ogole nie blokowal
+  gotowosci tekstu. Teraz nie jest wartoscia, ale zawsze oznacza tekst niegotowy.
+  Do tego trzy falszywe alarmy znalezione przy pomiarze edycji EN i PT: skrot przepisu
+  rozpoznawany w koncowce zwyklego wyrazu, przypis "[1]" brany za pole do
+  wypelnienia oraz limit skrocenia liczony razem z otoczka czatu (model zostawial wate,
+  zeby zmiescic sie w limicie). Piec nowych testow, kazdy widziany najpierw na czerwono.
+
+## [2026.10.13c] - 2026-10-13
+
+### Changed
+
+- `humanizer-pl` 1.5.0 (`jakosc-tresci` 1.3.0) - minimalna ingerencja: zmienia tylko to, co
+  naprawde zgrzyta, i pilnuje, zeby tresc przetrwala przepisanie:
+  - **inwentarz przed przepisaniem** i sekcja "czego nie wolno zmienic": wartosci, sila
+    normy, pewnosc, powody i warunki, kto co robi, terminy prawne i zdefiniowane;
+    "brak zmiany to poprawny wynik";
+  - **tryb rejestru prawniczego**: w umowach i pismach terminy zdefiniowane, strona bierna
+    w opisie stanu prawnego i tiret zostaja, reszta jest wskazywana, nie przepisywana;
+  - **bramka `scripts/audyt_po_przepisaniu.py`** (stdlib, bez sieci): wartosci wrazliwe,
+    profil deontyczny, pewnosc, slady czatu, terminy chronione i zdefiniowane, limit
+    skrocenia; trojstan OK/UWAGI/BLOKADA z pelnym mianownikiem; testy w `tests/`
+    widziane najpierw na czerwono;
+  - #7, #13 i #14 reaguja na skupienie, nie na pojedynczy sygnal; #30-#34 jako reguly
+    redakcyjne, bez liczb i obietnic o detektorach.
+
+## [2026.10.13b] - 2026-10-13
+
+### Changed
+
+- `let-it-be` 0.8.0 (`dokumenty` 1.13.0) - kopia zsynchronizowana z kanonem
+  `matematic-anonimizacja-pl` (`52d1782`):
+  - numer ze zla suma kontrolna (PESEL, NIP, REGON, IBAN) jest maskowany i oznaczony do
+    przegladu (`walidacjaSumy`, `doPrzegladu`), takze bez etykiety i przy cyfrze za malo
+    lub za duzo po etykiecie; do 0.7.0 PESEL z literowka bez etykiety zostawial 2 cyfry jawne;
+  - kwoty ("152 422 384,00 zl", "600 700 800 PLN") nie sa juz brane za telefon;
+  - CLI czyta zapisany plik od nowa i sprawdza go (oryginaly w tekscie i bajtach, tokeny,
+    ponowna detekcja); BLOKADA usuwa pliki;
+  - `ewaluacja/sprawdzian_numerow.mjs` i kontrola negatywna w testach (58 -> 113 testow).
+  Wzorce (idea, bez kodu) z ocen poufnika (Apache-2.0) i cenzora (MIT) - atrybucja w
+  THIRD_PARTY_INSPIRATIONS.md skilla.
+
+## [2026.10.13] - 2026-10-13
+
+### Added
+
+- `chronologia-stanowiska-pl` 0.2.0 (`dokumenty` 1.12.0) - bramka lokatorow dostaje trzy
+  mechanizmy:
+  - **odcisk akt** (`akta_odcisk`): wynik niesie skrot tekstu akt, na ktorym powstal.
+    Gdy tekst sie zmieni (ponowny OCR, dolozony plik), bramka wskazuje plik zamiast
+    sprawdzac nowa wersje po cichu. Skrot liczony z tekstu, nie z PDF - ponowny OCR
+    tego samego PDF zmienia tekst, a skrot PDF zostaje ten sam;
+  - **nieocenione to nie pusto**: brak pola listy (np. `dowody_przeciw`) = nie oceniono,
+    `[]` = sprawdzono i nic nie ma;
+  - **`--profil sad`**: przed pismem do sadu nazwane watpliwosci (nieznana wersja akt,
+    nieoceniona komorka, nieczytelna strona, fakt spoza akt) blokuja zamiast ostrzegac.
+  16 nowych testow widzianych najpierw na czerwono; wylaczenie ktoregokolwiek
+  mechanizmu wywraca testy. Pomysly (bez kodu) z `legal-abduction` w
+  GSkuza/AI-Legal-SkillsPL - zrodlo w NOTICE skilla.
+
+## [2026.10.10d] - 2026-10-10
+
+### Fixed
+
+- `citation-grounding-pl` 2.6.0 (`fundament-weryfikacyjny` 1.3.1): pusta lista cytatow
+  (`items: []` albo brak pola) dawala `blokada: false` i kod wyjscia 0 - bramka bez
+  niczego do sprawdzenia oglaszala sukces. Teraz BLOKADA z polem `powod`; test CLI
+  widziany na czerwono przed poprawka, po niej 36/36.
+- `eu-sparql-search` (`orzecznictwo-zrodla` 2.0.1): usunieta rada, by przy bledzie
+  certyfikatu wylaczyc weryfikacje TLS (`CERT_NONE`). Bez weryfikacji kazda siec po
+  drodze moze podsunac sfalszowany tekst aktu. Zamiast tego: ponow, odswiez `certifi`,
+  a jesli dalej nie dziala - stop i zgloszenie, ze zrodlo jest nieosiagalne.
+
+## [2026.10.10c] - 2026-10-10
+
+### Removed
+
+- `szukaj-orzeczen-v2` wycofany z bundla `orzecznictwo-zrodla` 2.0.0 (7 skilli zamiast 8).
+  Skill nie byl nasz: kod pochodzi od GSkuza
+  ([GSkuza/ai-polish-text-expert](https://github.com/GSkuza/ai-polish-text-expert), licencja MIT).
+  Opublikowalismy go jako Apache-2.0 bez noty autora i bez tekstu licencji MIT - a MIT wymaga
+  zachowania obu w kazdej kopii. Zamiast poprawiac opis cudzej pracy w naszym katalogu -
+  wycofujemy go. Wyszukiwanie w SAOS pokrywa nasz `saos-orzecznictwo`; odeslania
+  w `citation-grounding-pl`, `intake-sufficiency-pl`, `hierarchia-zrodel-pl`,
+  `struktura-wyroku-pl`, `matematic-marketplace-installer` i przepisie `wachta-orzeczen`
+  kieruja teraz do niego. Usunieto tez wpisy w NOTICE
+  i THIRD_PARTY_INSPIRATIONS oraz odznake.
+
+## [2026.10.10b] - 2026-10-10
+
+### Changed
+
+- `let-it-be` 0.7.0 (`dokumenty` 1.11.0): kopia w hubie zsynchronizowana z kanonem
+  [matematicsolutions/matematic-anonimizacja-pl](https://github.com/matematicsolutions/matematic-anonimizacja-pl)
+  (commit `cb72fd2`). Hub mial 0.2.0 z dopisana dzis lokalnie poprawka pod numerem "0.2.1",
+  ktory w kanonie oznacza inna zmiane; teraz historia wersji jest jedna. Wchodza wersje 0.2.1-0.7.0:
+  osoba z polska litera na granicy wyrazu ("Łukasz Nowak", "Jan Łoś"), tekst NFD z PDF, nazwisko
+  wykrytej osoby maskowane w calym tekscie i w odmianie, imiona w odmianie, wersaliki i
+  "Nazwisko Imie" z tabel, dwa imiona, forma prawna spolki w kazdym zapisie, dalsze wystapienia
+  nazwy spolki bez formy, fundacje i stowarzyszenia, PESEL/NIP/REGON z etykieta i bledna suma
+  kontrolna, NIP w zapisie 123-45-67-890, katalog `ewaluacja/` z piecioma zestawami pisanymi na
+  slepo. Szczegoly i pomiary: CHANGELOG skilla. SKILL.md mowi, czego bramka "no PII leaves" nie widzi, i nazywa zmierzone
+  ograniczenia. README huba: wersja skilla 0.7.0 (bylo 1.0.0 - takiej wersji nie bylo).
+
+## [2026.10.10] - 2026-10-10
+
+### Fixed
+
+- `ochrona-danych` 1.2.0: kazda jednostka redakcyjna w czterech skillach RODO i ich skryptach
+  (48 jednostek) sprawdzona wobec polskiego tekstu RODO z EUR-Lex, rozporzadzenia 1182/71,
+  wytycznych EROD 9/2022, WP248 rev.01 i wykazu Prezesa UODO (M.P. 2019 poz. 666), wpisana do
+  `reviews/legal-accuracy.md`. Wrocily pominiete warunki: zgloszenie naruszenia "bez zbednej
+  zwloki - w miare mozliwosci, nie pozniej niz w terminie 72 godzin" (72h to granica, nie cel);
+  odpowiedz na zadanie bez zbednej zwloki, najpozniej w miesiac; art. 35 ust. 3 lit. a wymaga
+  decyzji o skutkach prawnych lub podobnie istotnych, nie samego profilowania; pozycje art. 30
+  ust. 1 lit. e-g z warunkami "gdy ma to zastosowanie" i "jezeli jest to mozliwe". Uzupelnione
+  listy: piec wylaczen z art. 17 ust. 3, IOD "lub inny punkt kontaktowy", przedstawiciel
+  administratora, obowiazki i prawa administratora w art. 28 ust. 3, wyjatek z art. 28 ust. 3
+  lit. a, usuniecie kopii i sygnalizacja polecenia naruszajacego przepisy, czynnik ryzyka
+  "cechy szczegolne administratora".
+- `rodo-dsar-pl`: "ewidentnie nieuzasadnione lub nadmierne" zamiast "ewidentnie bezzasadne" -
+  brzmienie art. 12 ust. 5.
+- `rodo-dpia-pl`: wykaz Prezesa UODO opisany zgodnie z komunikatem (kryteria, co do zasady dwa,
+  przyklady ilustracyjne), a nie jako lista operacji "zawsze wymagajacych DPIA"; WP248
+  przypisane Grupie Roboczej Art. 29, nie EROD.
+- Kalkulatory terminow mowia, co licza: granice, z zapasem, z nazwanym brakiem art. 3 ust. 1 i
+  ust. 4 rozporzadzenia 1182/71.
+
+### Changed
+
+- `ochrona-danych`: `Bash` usuniety z `allowed-tools` w czterech skillach RODO; Claude Code pyta
+  przed uruchomieniem kazdego kalkulatora.
+
+## [2026.10.07b] - 2026-10-07
+
+### Fixed
+
+- `chronologia-stanowiska-pl` 0.1.1 (plugin `dokumenty` 1.10.1) i `kyc-kancelaria-pl` 0.1.1
+  (plugin `governance-kancelarii` 1.3.1) - poprawki z testu czystej instalacji (agent bez
+  kontekstu, sam SKILL.md, zipy pobrane z Boutique) i z uruchomienia w claude.ai. Chronologia:
+  bramka egzekwuje teraz to, co obiecuje SKILL.md - fakt spoza akt nawet z kotwica, data
+  przedzialowa albo przyblizona i `wniosek` bez uzasadnienia daja UWAGI, prog wiekszosci
+  kluczowych dziala od czterech wpisow. KYC: brak nazwy w dokumentach prosi o uzupelnienie
+  zamiast eskalacji, `null` w teczce nie wywraca bramki, kazda awaria oceny to BLOKADA (nigdy
+  kod spoza trojstanu), licznik rozdziela nazwy i osoby. SKILL.md obu skilli mowi, gdzie dzialaja:
+  w claude.ai piaskownica odcina rejestry, wiec KYC uczciwie zglasza BLOKADE.
+- Wspolne reguly `dokumenty`: zakres wtyczki obejmuje akta i chronologie; zdanie, ze wtyczka nie
+  sprawdza cytatu, przeczylo bramce lokatorow - teraz rozroznia cytat wobec zrodla prawa
+  (fundament weryfikacyjny) od cytatu wobec strony akt.
+
+## [2026.10.07] - 2026-10-07
+
+### Added
+
+- `chronologia-stanowiska-pl` 0.1.0 (plugin `dokumenty` 1.10.0) - z tekstu akt (wynik
+  `akta-przeszukiwalne-pl`) chronologia zdarzen albo zestawienie stanowisk stron: element
+  roszczenia, twierdzenie, stanowisko przeciwnika, dowody za i przeciw, luka. Rozdziela date
+  zdarzenia, dokumentu, nadania, doreczenia i wplywu. `scripts/bramka_lokatorow.py` sprawdza
+  bez LLM, czy kazdy cytat stoi na wskazanej stronie akt (OK / UWAGI / BLOKADA, pusta lista =
+  BLOKADA), a eksport CSV neutralizuje formuly. Adaptacja czterech otwartych skilli (Apache-2.0
+  i MIT, atrybucja w NOTICE skilla); 20 testow na fikcyjnych aktach.
+- `kyc-kancelaria-pl` 0.1.0 (plugin `governance-kancelarii` 1.3.0) - teczka KYC/AML
+  klienta-spolki: odpis KRS i biala lista VAT (wychodzi tylko numer KRS albo NIP), listy
+  sankcyjne ONZ, UE i MSWiA pobierane w calosci i dopasowywane lokalnie, zgodnosc beneficjentow
+  z wydrukiem CRBR, 13 regul z pelnym mianownikiem. Niczego nie zatwierdza - kieruje do
+  czlowieka. Publiczne API KRS maskuje dane osob, wiec pelne dane przychodza z odpisu PDF i sa
+  sprawdzane z maska (R13); osoba bez pelnych danych jest liczona jako nieprzesiana. Usluga SOAP
+  CRBR zwracala blad serwera przy sondzie - wydruk CRBR dostarcza prawnik. Wzorzec
+  anthropics/financial-services (Apache-2.0); 25 testow na fikcyjnych danych.
+
+## [2026.10.06] - 2026-10-06
+
+### Fixed
+
+- Wspolne reguly wtyczek docieraja do uzytkownika. Claude Code nie laduje `CLAUDE.md` z katalogu
+  wtyczki (mowi to `claude plugin validate` i kontrola katalogu Claude), wiec siatka bezpieczenstwa
+  kazdego bundla nie trafiala do nikogo - ani po `/plugin install`, ani przy pojedynczym skillu.
+  Reguly kazdej wtyczki mieszkaja teraz w `SHARED-RULES.md`, a `scripts/shared-rules-sync.py`
+  kopiuje je na koniec kazdego `SKILL.md` i daje BLOKADE przy kazdym rozjezdzie. Blok niesie
+  46 skilli w 7 bundlach; `multi-jurysdykcja-ue` ma same konektory i czeka na osobna poprawke.
+- README, TRUST.md i `references/` nie twierdza juz, ze reguly niesie `CLAUDE.md` wtyczki.
+  Wzorzec nowej wtyczki (`references/format-plugina-dziedzinowego.md`) wymaga `SHARED-RULES.md`
+  i zielonej bramki synchronizacji.
+- Przyklad `(kodeks cywilny art. 415)` w regulach fundamentu sprawdzony u zrodla (Repertorium,
+  eli:DU/1964/93) i wpisany do `reviews/legal-accuracy.md` dla 11 skilli.
+
+
+### Changed
+
+- `marko-pl-content` 1.2.0: opis i typy tresci bez odniesien do serwisu MateMatic (skill dziala
+  na dowolnych polskich tekstach), styl domu (krotki myslnik) ustepuje wlasnemu przewodnikowi
+  stylu uzytkownika, `allowed-tools` dopuszcza z gory tylko `git diff` i `git status`.
 
 ## [2026.09.21d] - 2026-09-21
 

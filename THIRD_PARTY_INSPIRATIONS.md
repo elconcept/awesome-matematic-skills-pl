@@ -80,6 +80,10 @@ legal-risk-assessment, meeting-briefing, nda-triage, skill-creator, docx-process
 pdf-processing, pptx-processing, xlsx-processing) jako referencja formatu Agent Skills
 i scope. Apache-2.0 pozwala na komercyjne uzycie, ale wlasne skille w tym hubie
 napisane od zera pod polskie realia.
+**Aktualizacja 2026-10-07**: ADAPTACJA w `chronologia-stanowiska-pl` - skille
+`litigation-legal/chronology` i `claim-chart` (commit d541734): postawa tajemnicy A/B/C,
+waga zdarzen wedlug perspektywy strony, wariant stanu faktycznego, mapa element x dowody
+z lista luk jako glownym wynikiem. Tekst polski wlasny, bez odwolan do prawa USA.
 
 ## Inspiracje na poziomie skilli (walidacja outputu LLM)
 
@@ -191,13 +195,51 @@ w CI zamiast zaufania tabelom).
 nie bezposrednio w tym hubie. 9 wzorcow architektury grafu wiedzy zaadaptowanych
 w KGLF blueprint.
 
+## Inspiracje na poziomie skilli (spory i KYC, 2026-10-07)
+
+### b1rdmania / chronology (Apache-2.0)
+
+**Repo**: https://github.com/b1rdmania/chronology
+**Snapshot**: commit 628e807 (2026-06-12)
+**Licencja**: Apache-2.0 (kopia na liscie lawve-ai podaje MIT - obowiazuje repo autora)
+**Relacja**: ADAPTACJA w `chronologia-stanowiska-pl`. Kazdy wpis przypisany do dokumentu
+zrodlowego i bramka dopuszczalnosci uzycia materialu przed ekstrakcja. U nas zamiast
+CPR 31.22 pytanie o material z innego postepowania, z markerem `[DO WERYFIKACJI]`.
+
+### legalquants / lq-skills (Apache-2.0)
+
+**Repo**: https://github.com/legalquants/lq-skills
+**Snapshot**: commit 70ebcea (2026-06-28)
+**Licencja**: Apache-2.0 (per skill)
+**Relacja**: ADAPTACJA w `chronologia-stanowiska-pl` (`building-chronologies`): pasmo
+pewnosci daty, rozdzielenie daty zdarzenia i daty dokumentu, luki jako czesc wyniku.
+
+### rohasnagpal / legal-ai-skills (MIT)
+
+**Repo**: https://github.com/rohasnagpal/legal-ai-skills
+**Snapshot**: commit 20fbad1 (2026-10-01)
+**Licencja**: MIT
+**Relacja**: ADAPTACJA w `chronologia-stanowiska-pl` (`chronology-builder`,
+`pleadings-analyst`): rodzaje dat (nadanie, doreczenie, wplyw), status wpisu (dowod,
+relacja, twierdzenie strony), klasyfikacja stanowiska przeciwnika.
+
+### Anthropic / financial-services (Apache-2.0)
+
+**Repo**: https://github.com/anthropics/financial-services
+**Snapshot**: commit bb4a2b3 (2026-09-21)
+**Licencja**: Apache-2.0
+**Relacja**: ADAPTACJA w `kyc-kancelaria-pl` (`kyc-screener`: `kyc-doc-parse`,
+`kyc-rules`): rozdzial parsowania teczki od silnika regul, dokumenty klienta jako dane
+niezaufane, wynik reguly z odwolaniem do reguly, dyspozycja zamiast decyzji. Rejestry
+polskie, listy sankcyjne i bramka R01-R13 wlasne.
+
 ## Inspiracje na poziomie zrodel danych (orzecznictwo, prawo)
 
 ### Fundacja ePanstwo / SAOS API
 
 **API**: https://www.saos.org.pl
 **Licencja danych**: CC0 / public domain
-**Relacja**: ZRODLO DANYCH. `saos-orzecznictwo` i `szukaj-orzeczen-v2` uzywaja
+**Relacja**: ZRODLO DANYCH. `saos-orzecznictwo` uzywa
 publicznego REST API SAOS. Dane orzecznictwa = public domain (Art. 4 ustawy
 o prawie autorskim - akty normatywne i orzeczenia organow wladzy nie sa
 przedmiotem prawa autorskiego).

@@ -17,7 +17,7 @@ Licencja kuratorska: **MIT** (umiejetnosci w bundlach zachowuja wlasne licencje 
 
 ## Co tu znajdziesz
 
-1. **Bundle domenowe instalowane jedna komenda** - 46 umiejetnosci spietych w 8 pluginow wedlug funkcji (fundament weryfikacyjny, orzecznictwo + zrodla, dokumenty, governance kancelarii, jakosc tresci, ochrona danych RODO, dev, multi-jurysdykcja UE). Kazdy instalujesz jednym `npx skills add matematicsolutions/awesome-matematic-skills-pl` (dowolny agent) albo `/plugin install` (natywnie w Claude Code); konektory MCP polskich zrodel instaluja sie razem z bundlem orzecznictwa.
+1. **Bundle domenowe instalowane jedna komenda** - 48 umiejetnosci spietych w 8 pluginow wedlug funkcji (fundament weryfikacyjny, orzecznictwo + zrodla, dokumenty, governance kancelarii, jakosc tresci, ochrona danych RODO, dev, multi-jurysdykcja UE). Kazdy instalujesz jednym `npx skills add matematicsolutions/awesome-matematic-skills-pl` (dowolny agent) albo `/plugin install` (natywnie w Claude Code); konektory MCP polskich zrodel instaluja sie razem z bundlem orzecznictwa.
 2. **Awesome list** - linki do pokrewnych repo produktowych w ekosystemie MateMatic: 6 konektorow MCP, 5 pluginow Claude Code dla praktyki PL, lokalny agent Patron, audyt gotowosci Readiness, przewodniki Praxis.
 3. **Standard frontmatter** dla skilli PL (autor, wersja CalVer, licencja per-skill, companion_skills, inspiration) - patrz [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -59,7 +59,7 @@ Plugin Claude Code [matematic-legal-verify-pl](https://github.com/matematicsolut
 
 ---
 
-## Pakiet - 46 umiejetnosci w 8 bundlach
+## Pakiet - 48 umiejetnosci w 8 bundlach
 
 Wszystkie umiejetnosci sa spiete w pluginy domenowe - instalujesz jedna komenda. Zadna nie lezy juz pojedynczo w `./skills/`.
 
@@ -88,7 +88,6 @@ Bundle ze zrodlami. Niesie konektory MCP `saos`, `krs`, `eu-sparql` (read-only, 
 | Skill | Opis | Licencja | Wersja |
 |---|---|---|---|
 | [<img src="./assets/badge-saos-orzecznictwo.svg" alt="SAOS Orzecznictwo" width="200" height="60">](./orzecznictwo-zrodla/skills/saos-orzecznictwo) | Polish case law search via SAOS REST API - sady powszechne, SN, TK, KIO. Lean SKILL.md (125 linii) + `references/api.md`. | Apache-2.0 | 2026.05.27 |
-| [<img src="./assets/badge-szukaj-orzeczen-v2.svg" alt="Szukaj Orzeczen v2" width="200" height="60">](./orzecznictwo-zrodla/skills/szukaj-orzeczen-v2) | Wyszukiwanie orzeczen PL + opcjonalne grupowanie tematyczne (klastrowanie, raport DOCX). v2.1.0: SKILL.md 460->60 linii + 4 pliki `references/`. | Apache-2.0 | 2.1.0 |
 | [<img src="./assets/badge-eu-sparql-search.svg" alt="EU SPARQL Search" width="200" height="60">](./orzecznictwo-zrodla/skills/eu-sparql-search) | EUR-Lex / Cellar SPARQL - akty UE i orzecznictwo TSUE, CELEX, ELI URI. | Apache-2.0 | 2026.05.24 |
 | [<img src="./assets/badge-legal-data-hunter-pl.svg" alt="Legal Data Hunter" width="200" height="60">](./orzecznictwo-zrodla/skills/legal-data-hunter-pl) | Catalog + bulk-harvest dla 11 polskich zrodel prawnych (UODO, UOKiK, KNF, KIO, NSA, TK, SN, Sejm ELI). | Apache-2.0 | 2026.05.22 |
 | [<img src="./assets/badge-webwright-legal-pl.svg" alt="Webwright Legal PL" width="200" height="60">](./orzecznictwo-zrodla/skills/webwright-legal-pl) | Pobiera orzeczenia z serwisow niedostepnych w MCP (orzeczenia.ms.gov.pl, sn.pl po 2016, trybunal.gov.pl, EUR-Lex PL) przez Playwright. | Apache-2.0 | 1.0.1 |
@@ -105,12 +104,13 @@ Operacje na dokumentach, bez konektorow. Instalacja: `/plugin install dokumenty@
 | [<img src="./assets/badge-markitdown.svg" alt="MarkItDown" width="200" height="60">](./dokumenty/skills/markitdown) | Microsoft MarkItDown - PDF/Word/Excel/PPT/HTML/EPUB/audio/obrazy/YouTube -> Markdown. | MIT | 2026.04.21 |
 | [<img src="./assets/badge-opendataloader-pdf.svg" alt="OpenDataLoader PDF" width="200" height="60">](./dokumenty/skills/opendataloader-pdf) | Wysokiej jakosci PDF -> JSON/MD: reading order, tabele, headings. Krytyczne dla KRS i postanowien. | Apache-2.0 | 2026.04.21 |
 | [<img src="./assets/badge-redline-docx-pl.svg" alt="Redline DOCX PL" width="200" height="60">](./dokumenty/skills/redline-docx-pl) | Natywne Word Track Changes w polskich .docx + sanitize metadanych autora (RODO przy wysylce). Safety Tiers R/M/D. | MIT | 2026.05.27 |
-| [<img src="./assets/badge-let-it-be.svg" alt="Let It Be" width="200" height="60">](./dokumenty/skills/let-it-be) | Silnik anonimizacji i pseudonimizacji polskich PII (PESEL, NIP, REGON, KRS, IBAN, imiona, firmy) w tekscie. Offline, deterministyczny, zero zaleznosci. | Apache-2.0 | 1.0.0 |
+| [<img src="./assets/badge-let-it-be.svg" alt="Let It Be" width="200" height="60">](./dokumenty/skills/let-it-be) | Silnik anonimizacji i pseudonimizacji polskich PII (PESEL, NIP, REGON, KRS, IBAN, imiona, firmy) w tekscie. Offline, deterministyczny, zero zaleznosci. | Apache-2.0 | 0.8.0 |
 | [<img src="./assets/badge-terminy-procesowe-pl.svg" alt="Terminy procesowe" width="200" height="60">](./dokumenty/skills/terminy-procesowe-pl) | Metodyka terminow procesowych i materialnych (KC/KPC/KPA): pelne wyliczenie krok po kroku z podstawa kazdego kroku, fail-closed, karta terminu DO ZATWIERDZENIA przez pelnomocnika. | Apache-2.0 | 1.0.0 |
 | [<img src="./assets/badge-klauzule-kontraktowe-pl.svg" alt="Klauzule Pod Lupa" width="200" height="60">](./dokumenty/skills/klauzule-kontraktowe-pl) | Lista kontrolna 41 kategorii klauzul umownych (taksonomia CUAD zlokalizowana PL/UE) dla jednej umowy - obecna/brak/ryzykowna, z kotwica do przepisu. | Apache-2.0 | 1.0.0 |
 | [<img src="./assets/badge-kalkulatory-procesowe-pl.svg" alt="Kalkulatory procesowe" width="200" height="60">](./dokumenty/skills/kalkulatory-procesowe-pl) | Cztery kalkulatory procesu cywilnego (oplata sadowa UKSC, przedawnienie art. 117-125 KC, odsetki w trzech rezimach, WPS art. 19-26 KPC) z protokolem "pobierz zywe parametry przed obliczeniem" i wachta aktow bazowych w CI. | Apache-2.0 | 1.0.0 |
 | [<img src="./assets/badge-doc-intel-contract-pl.svg" alt="Doc Intel Contract" width="200" height="60">](./dokumenty/skills/doc-intel-contract-pl) | Normalizuje wyjscie OCR/PDF (opendataloader-pdf, pdftotext, Chandra OCR, LiteParse) do jednego audytowalnego kontraktu {block_type, bbox, text, confidence}: confidence-gating z kolejka dla czlowieka, flagi PII pod redakcje, bbox do groundingu cytatu. OCR skanow na CPU i lokalny podzial teczki na pisma. Zero LLM. | MIT | 0.5.0 |
 | [<img src="./assets/badge-akta-przeszukiwalne-pl.svg" alt="Akta przeszukiwalne" width="200" height="60">](./dokumenty/skills/akta-przeszukiwalne-pl) | Folder akt (takze skany) -> tekst z numerami stron, lokalna wyszukiwarka (polskie znaki i odmiana) i raport: strony nieczytelne, duplikaty plikow i pliki o identycznej tresci pod roznymi nazwami. OCR na CPU, tekst akt nie opuszcza komputera. | MIT | 0.1.2 |
+| [<img src="./assets/badge-chronologia-stanowiska-pl.svg" alt="Chronologia i stanowiska" width="200" height="60">](./dokumenty/skills/chronologia-stanowiska-pl) | Z tekstu akt chronologia zdarzen (rozdzielone daty zdarzenia, dokumentu, doreczenia, wplywu) albo zestawienie stanowisk stron: element roszczenia, twierdzenie, stanowisko przeciwnika, dowody, luka. Deterministyczna bramka sprawdza, czy kazdy cytat stoi na wskazanej stronie akt; pusta lista to BLOKADA. | Apache-2.0 | 0.1.1 |
 | [<img src="./assets/badge-doc-intel-llm-tier-pl.svg" alt="Doc Intel LLM Tier" width="200" height="60">](./dokumenty/skills/doc-intel-llm-tier-pl) | Ekstrakcja inferowanych konceptow z umowy, pisma lub wyroku (kara umowna, termin, sad wlasciwy, ryzyka) z zakotwiczeniem kazdego w zdaniu zrodlowym. Wrap na contextgem, domyslnie model lokalny. | MIT | 1.0.0 |
 | [<img src="./assets/badge-waliduj-podpis-pdf-pl.svg" alt="Waliduj Podpis PDF" width="200" height="60">](./dokumenty/skills/waliduj-podpis-pdf-pl) | Sprawdza podpis elektroniczny w przychodzacym PDF: czy plik zmieniono po podpisaniu, kto i kiedy podpisal, znacznik czasu, zakres podpisu. Lokalnie na pyHanko, bez sieci. | MIT | 0.1.0 |
 
@@ -125,6 +125,7 @@ Generatory governance i operacyjne, bez konektorow. Instalacja: `/plugin install
 | [<img src="./assets/badge-matematic-workspace-backup.svg" alt="Workspace Backup" width="200" height="60">](./governance-kancelarii/skills/matematic-workspace-backup) | Szyfrowany backup Google Workspace przez gogcli + age + prywatne repo Git. Adresuje RODO art. 32 (ciaglosc, ochrona przed lockoutem). | Apache-2.0 | 1.0.0 |
 | [<img src="./assets/badge-ai-act-triage-pl.svg" alt="AI Act Triage" width="200" height="60">](./governance-kancelarii/skills/ai-act-triage-pl) | Triage AI Act (2024/1689): definicja systemu AI, zakazy art. 5, wysokie ryzyko (zal. I/III + filtr art. 6 ust. 3), GPAI, przejrzystosc art. 50, rola podmiotu, sygnal FRIA art. 27. Konczy karta klasyfikacji - wejscie do Konstytucji AI. | Apache-2.0 | 1.0.0 |
 | [<img src="./assets/badge-tajemnica-preflight-pl.svg" alt="Tajemnica Preflight" width="200" height="60">](./governance-kancelarii/skills/tajemnica-preflight-pl) | Preflight przed wyslaniem tresci prawnej do zewnetrznego AI: pasmo SAFE/CAUTION/STOP (tajemnica adwokacka/radcowska, RODO, tajemnica przedsiebiorstwa, work-product) + draft redakcji do zatwierdzenia. | Apache-2.0 | 1.0.0 |
+| [<img src="./assets/badge-kyc-kancelaria-pl.svg" alt="KYC kancelarii" width="200" height="60">](./governance-kancelarii/skills/kyc-kancelaria-pl) | Teczka KYC/AML klienta-spolki: odpis KRS i biala lista VAT (wychodzi tylko numer), listy sankcyjne ONZ, UE i MSWiA dopasowywane lokalnie, zgodnosc beneficjentow z wydrukiem CRBR, 13 regul z trojstanem. Niczego nie zatwierdza - decyduje czlowiek. CRBR na razie recznie. | Apache-2.0 | 0.1.1 |
 
 ### Plugin `jakosc-tresci` (jakosc tekstu polskiego)
 
@@ -132,7 +133,7 @@ Narzedzia redakcyjne, neutralne tematycznie, bez konektorow. Zmieniaja slowa, ni
 
 | Skill | Opis | Licencja | Wersja |
 |---|---|---|---|
-| [<img src="./assets/badge-humanizer-pl.svg" alt="Pisz po ludzku" width="200" height="60">](./jakosc-tresci/skills/humanizer-pl) | Usuwa wzorce AI-slop z polskiego tekstu (43 wzorce), w tym sygnatury statystyczne wykrywane przez detektory, tryb dokumentacja i pisownie sprzed reformy RJP 2026. | MIT | 1.3.0 |
+| [<img src="./assets/badge-humanizer-pl.svg" alt="Pisz po ludzku" width="200" height="60">](./jakosc-tresci/skills/humanizer-pl) | Usuwa wzorce AI-slop z polskiego tekstu (43 wzorce), tryb dokumentacja, tryb rejestru prawniczego i pisownie sprzed reformy RJP 2026. Minimalna ingerencja: bramka po przepisaniu pilnuje dat, kwot, przepisow, sily normy i terminow prawnych. | MIT | 1.5.1 |
 | [<img src="./assets/badge-marko-pl-content.svg" alt="Marko-PL" width="200" height="60">](./jakosc-tresci/skills/marko-pl-content) | Zrzedliwy senior redaktor - werdykt (katastrofa/slabe/przecietne/ok) + lista zarzutow z `plik:linia`. Wskazuje co zle, nie przepisuje. Skaner pisowni sprzed reformy RJP 2026. | MIT | 1.1.1 |
 
 ### Plugin `ochrona-danych` (operacje RODO dla kancelarii i IOD)
@@ -197,7 +198,7 @@ Pakiet wyzej to warstwa walidacji outputu i narzedzia konwersji. Pelny ekosystem
 
 ## Instalacja
 
-Trzy drogi. **A** (`npx skills`) dziala w **dowolnym agencie** wspierajacym format Agent Skills (Cursor, OpenAI Codex, Windsurf, Gemini CLI, Claude Code) i instaluje pojedyncze skille. **B** to natywny marketplace Claude Code - instaluje calymi bundlami, z zachowaniem granic pluginu i jego inline `CLAUDE.md`. **C** to reczny symlink jednego skilla.
+Trzy drogi. **A** (`npx skills`) dziala w **dowolnym agencie** wspierajacym format Agent Skills (Cursor, OpenAI Codex, Windsurf, Gemini CLI, Claude Code) i instaluje pojedyncze skille. **B** to natywny marketplace Claude Code - instaluje calymi bundlami, z zachowaniem granic pluginu. Wspolne reguly kazdej wtyczki (`SHARED-RULES.md`) sa skopiowane na koniec kazdego `SKILL.md` skryptem `scripts/shared-rules-sync.py`, wiec dzialaja na kazdej drodze, takze przy pojedynczym skillu. Wyjatek: `multi-jurysdykcja-ue` nie ma skilli, tylko konektory. **C** to reczny symlink jednego skilla.
 
 **Co zainstalowac.** Kancelaria zaczyna od `fundament-weryfikacyjny` (rdzen walidacji) i `orzecznictwo-zrodla` (zrodla PL/UE), a `dokumenty`, `governance-kancelarii`, `jakosc-tresci` i `ochrona-danych` dobiera wedlug potrzeb. Bundle `dev-mcp` to warsztat dla deweloperow - pomin go, jesli nie budujesz skilli ani serwerow MCP. Caly hub jedna komenda (`npx skills add ...` bez `--skill`) wciaga wszystkie 46 skilli naraz; wiekszosc kancelarii woli `--skill` albo `/plugin install` wybranych bundli.
 
@@ -230,7 +231,7 @@ npx skills add matematicsolutions/awesome-matematic-skills-pl --skill citation-g
 /plugin install dev-mcp@matematic-skills-pl                      # narzedzia deweloperskie (advanced)
 ```
 
-Fundament dziala bez zadnych konektorow i niczego nie wysyla na zewnatrz. Plugin `orzecznictwo-zrodla` uruchamia konektory MCP przez `npx`, wiec wymaga `node` w srodowisku. Wszystkie 46 umiejetnosci sa w bundlach - nic nie lezy juz pojedynczo.
+Fundament dziala bez zadnych konektorow i niczego nie wysyla na zewnatrz. Plugin `orzecznictwo-zrodla` uruchamia konektory MCP przez `npx`, wiec wymaga `node` w srodowisku. Wszystkie 48 umiejetnosci sa w bundlach - nic nie lezy juz pojedynczo.
 
 ### C. Pojedynczy skill jako symlink do ~/.claude/skills/
 

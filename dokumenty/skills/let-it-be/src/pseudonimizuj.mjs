@@ -46,8 +46,9 @@ function buildTokens(text, entities) {
  * @returns {{text:string, map:Object, entities:Array, counts:Object, sourceHash:string}}
  */
 export function pseudonimizuj(text, opts = {}) {
-    const pii = detect(text, opts).entities.filter((e) => e.isPii);
-    const { out, map } = buildTokens(text, pii);
+    const det = detect(text, opts);
+    const pii = det.entities.filter((e) => e.isPii);
+    const { out, map } = buildTokens(det.text, pii);
     return {
         text: out,
         map,
@@ -67,12 +68,15 @@ export function pseudonimizuj(text, opts = {}) {
  * @returns {{text:string, entities:Array, counts:Object, sourceHash:string}}
  */
 export function anonimizuj(text, opts = {}) {
-    const pii = detect(text, opts).entities.filter((e) => e.isPii);
-    const { out } = buildTokens(text, pii);
-    const redacted = pii.map(({ type, start, end, confidence, ruleId }) =>
-        ({ type, start, end, confidence, ruleId }));
+    const det = detect(text, opts);
+    const pii = det.entities.filter((e) => e.isPii);
+    const { out, map } = buildTokens(det.text, pii);
+    const redacted = pii.map(({ type, start, end, confidence, ruleId, walidacjaSumy, doPrzegladu }) =>
+        ({ type, start, end, confidence, ruleId, walidacjaSumy, doPrzegladu }));
     return {
         text: out,
+        // Same tokeny (bez wartosci) - do kontroli pozytywnej po zapisie pliku.
+        tokeny: Object.keys(map),
         entities: redacted,
         counts: countByType(pii),
         sourceHash: sourceHash(text),

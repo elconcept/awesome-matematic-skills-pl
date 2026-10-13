@@ -344,14 +344,10 @@ for r in results:
     print(r["celex"]["value"])
 ```
 
-If SSL certificate errors occur (transient), disable verification:
-```python
-import ssl
-ctx = ssl.create_default_context()
-ctx.check_hostname = False
-ctx.verify_mode = ssl.CERT_NONE
-# pass context=ctx to urlopen
-```
+If SSL certificate errors occur, **do NOT disable verification** (`CERT_NONE` / `check_hostname = False`). Without it any network in the path can hand you forged legislation text that looks authentic. Instead:
+- retry once after a short pause (transient errors clear on their own);
+- if it persists, the local CA bundle is usually outdated: `pip install -U certifi` and pass `ssl.create_default_context(cafile=certifi.where())` to `urlopen`;
+- if it still fails, STOP and report the source as unreachable - an unverified answer about EU law is worse than no answer.
 
 ### Fetching document content from Cellar
 
@@ -509,3 +505,35 @@ The Cellar ID (UUID) comes from the `?work` URI returned by SPARQL queries - ext
 - **RSS/Atom feeds**: `https://op.europa.eu/en/web/cellar/cellar-data/rss-and-atom-feeds` - subscribe to new publications by collection
 - **Metadata notices**: RESTful XML/RDF metadata for a specific work, richer than SPARQL results
 - **Linked Data wizard**: `https://op.europa.eu/en/linked-data` - GUI query builder, no SPARQL needed
+
+<!-- shared-rules:begin (wygenerowane z ../../SHARED-RULES.md przez scripts/shared-rules-sync.py - nie edytuj tutaj) -->
+## Wspólne reguły wtyczki orzecznictwo-zrodla (Orzecznictwo i źródła)
+
+Te reguły obowiązują w każdym skillu tej wtyczki, także gdy sam skill milczy. Są skopiowane do każdego skilla, więc działają zarówno po instalacji całej wtyczki, jak i pojedynczego skilla. Pełniejszy standard: https://github.com/matematicsolutions/awesome-matematic-skills-pl/tree/main/references
+
+### Źródła, nie pamięć
+
+Ten plugin pobiera przepisy i orzecznictwo z baz przez konektory MCP (read-only, publiczne API). Każda teza prawna należy do jednej z klas:
+
+- **Zweryfikowane** - potwierdzone w bazie, z sygnaturą i źródłem: `(wyrok NSA II FSK NNNN/RR, SAOS)`.
+- **Do sprawdzenia** - prawdopodobne, jeszcze niepotwierdzone: `[zweryfikuj w EUR-Lex]`.
+- **Nie używać** - sygnatura lub przepis bez pokrycia w bazie. Pomiń, nie zmyślaj numeru.
+
+Samo istnienie sygnatury nie wystarcza - sprawdź treść orzeczenia, czy rozstrzyga to, co mu przypisujesz. Linia orzecznicza bywa zmienna; aktualność ocenia człowiek.
+
+### Konektory w tym pluginie
+
+Plik `.mcp.json` deklaruje konektory polskich i unijnych źródeł (SAOS, KRS, EUR-Lex). Działają read-only na publicznych danych. Wymagają `node`/`npx` w środowisku. Dane sprawy objęte tajemnicą lub wrażliwe - oceń osobno, czy w ogóle wnosić je do narzędzia; przy wątpliwości nie przekazuj.
+
+### Bramka człowieka
+
+Wynik to projekt do weryfikacji. Nic nie zostaje wysłane ani złożone, zanim sprawdzi to uprawniony człowiek, który bierze odpowiedzialność zawodową.
+
+### Pobieranie spoza MCP
+
+Oprócz konektorów plugin zawiera skill `webwright-legal-pl` - pobiera orzeczenia z serwisów niedostępnych przez MCP (orzeczenia.ms.gov.pl, sn.pl, trybunal.gov.pl, EUR-Lex PL) przez przeglądarkę (Playwright). Te same reguły: dane wrażliwe oceniaj osobno, wynik to projekt do weryfikacji.
+
+### Zakres pluginu
+
+Plugin dostarcza wyszukiwanie i pobieranie źródeł prawa PL/UE. Nie zastępuje analizy prawnej ani weryfikacji cytatu - tę warstwę daje plugin "fundament weryfikacyjny" (zalecany razem).
+<!-- shared-rules:end -->

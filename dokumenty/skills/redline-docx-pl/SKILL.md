@@ -262,7 +262,7 @@ uvx --from adeu==1.30.0 adeu apply --live edits.json       # edycja zywego dokum
 ## Integracja z let-it-be (PII PL)
 
 `sanitize` czysci **metadane** Worda, ale NIE tresc. Do anonimizacji tresci (PESEL,
-NIP, nazwiska w fleksji) najpierw przepusc tekst przez [`let-it-be`](../let-it-be), potem redline:
+NIP, nazwiska w fleksji) najpierw przepusc tekst przez `let-it-be`, potem redline:
 
 1. `let-it-be` -> pseudonimizuj tresc pisma (PII -> tokeny)
 2. praca/redline na zpseudonimizowanej wersji
@@ -291,7 +291,7 @@ wg tierow) i skanera placeholderow: [evolsb/legal-redline-tools](https://github.
 (wzorce PL: `DO UZUPELNIENIA`, `NN/RR`, `dnia __`, kwoty w zl) i pod format
 edits.json adeu zamiast ich wlasnego formatu redlines.
 
-Silnik wendorowany (NIEAKTYWNY): [`vendor/docx-engine/`](vendor/docx-engine/) - `packages/docx-engine`
+Silnik wendorowany (NIEAKTYWNY): [`vendor/docx-engine/`](vendor/docx-engine/README.md) - `packages/docx-engine`
 z [genspark-ai/genoffice](https://github.com/genspark-ai/genoffice) (Apache-2.0, commit `8f52328`),
 redystrybuowany razem z LICENSE i NOTICE zgodnie z sekcjami 4(b) i 4(d) tej licencji.
 
@@ -314,3 +314,29 @@ takze sie nie nadaje bez wlasnej warstwy ochronnej.
 Komplet liczb i rekomendacja: [THIRD_PARTY_INSPIRATIONS.md](THIRD_PARTY_INSPIRATIONS.md)
 (sekcja o genoffice) oraz [vendor/docx-engine/README.md](vendor/docx-engine/README.md).
 Decyzja o jakimkolwiek wpieciu nalezy do WM.
+
+<!-- shared-rules:begin (wygenerowane z ../../SHARED-RULES.md przez scripts/shared-rules-sync.py - nie edytuj tutaj) -->
+## Wspólne reguły wtyczki dokumenty (Dokumenty)
+
+Te reguły obowiązują w każdym skillu tej wtyczki, także gdy sam skill milczy. Są skopiowane do każdego skilla, więc działają zarówno po instalacji całej wtyczki, jak i pojedynczego skilla.
+
+Plugin obsługuje dokumenty: konwersję do Markdown, redlining .docx i anonimizację danych osobowych. Część operacji dotyka danych wrażliwych, więc reguła ochrony danych jest tu pierwsza.
+
+### Ochrona danych
+
+- **Anonimizacja przed wysyłką** - gdy dokument zawiera dane osobowe, oczyść je lokalnie (skill `let-it-be`), zanim treść trafi do modelu. Dane osobowe nie powinny wychodzić do API. To zasada minimalizacji (RODO).
+- **Metadane przy wysyłce** - redlining .docx czyści też metadane autora; sprawdź je przed przekazaniem pliku na zewnątrz.
+- **Próg poufności** - materiał objęty tajemnicą lub szczególnie wrażliwy oceniaj osobno, czy w ogóle wnosić do narzędzia. Przy wątpliwości nie przekazuj.
+
+### Operacje nieodwracalne
+
+Niektóre operacje są nieodwracalne (anonimizacja w trybie nieodwracalnym, zaakceptowanie wszystkich zmian w .docx). Skille oznaczają je jawnie - wykonuj je dopiero po potwierdzeniu przez człowieka.
+
+### Bramka człowieka
+
+Wynik to projekt. Nic nie zostaje wysłane ani złożone, zanim sprawdzi to uprawniony człowiek. Plugin przygotowuje plik, nie wykonuje aktu wysyłki.
+
+### Zakres pluginu
+
+Plugin daje narzędzia na dokumentach (konwersja, redline, anonimizacja, akta i chronologia). Nie ocenia treści prawnej. Weryfikację cytatu wobec źródła prawa daje plugin „fundament weryfikacyjny”; `chronologia-stanowiska-pl` sprawdza tylko, czy cytat stoi na wskazanej stronie akt.
+<!-- shared-rules:end -->

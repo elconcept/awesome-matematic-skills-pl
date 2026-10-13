@@ -14,7 +14,7 @@
     {
       "name": "fundament-weryfikacyjny",
       "description": "Rdzen weryfikacyjny instaluj-zawsze (11 skilli): routing zadania, ocena wejscia, grounding cytatu, ekstrakcja cytatow, sylogizm/subsumpcja, czerwony zespol, jednoprzebiegowy atak przeciwnika, test zimnego czytelnika (pierwsze wrazenie sedziego), wiernosc deliverable, ocena outputu, paczka audytowa AI Act art. 12. Neutralny jurysdykcyjnie, bez konektorow, bez wlasnych polaczen wychodzacych.",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "author": {
         "name": "Wieslaw Mazur / MateMatic"
       },
@@ -23,8 +23,8 @@
     },
     {
       "name": "orzecznictwo-zrodla",
-      "description": "Wyszukiwanie i pobieranie zrodel prawa PL/UE (8 skilli): SAOS, EUR-Lex, katalog zrodel krajowych, hierarchia zrodel (routing autorytetu przed odpowiedzia), struktura wyroku (streszczenie ekstraktywne), grounding cytatu decyzji UODO (uodo-grounding-pl), webwright (orzeczenia spoza MCP przez Playwright). Niesie konektory MCP saos/krs/eu-sparql (read-only, publiczne API). Wymaga node/npx.",
-      "version": "1.3.0",
+      "description": "Wyszukiwanie i pobieranie zrodel prawa PL/UE (7 skilli): SAOS, EUR-Lex, katalog zrodel krajowych, hierarchia zrodel (routing autorytetu przed odpowiedzia), struktura wyroku (streszczenie ekstraktywne), grounding cytatu decyzji UODO (uodo-grounding-pl), webwright (orzeczenia spoza MCP przez Playwright). Niesie konektory MCP saos/krs/eu-sparql (read-only, publiczne API). Wymaga node/npx.",
+      "version": "2.0.1",
       "author": {
         "name": "Wieslaw Mazur / MateMatic"
       },
@@ -33,8 +33,8 @@
     },
     {
       "name": "dokumenty",
-      "description": "Operacje na dokumentach (11 skilli): konwersja PDF/Office->Markdown (markitdown, opendataloader-pdf), redlining .docx z Track Changes (redline-docx-pl), anonimizacja i pseudonimizacja PII (let-it-be), metodyka terminow procesowych z bramka czlowieka (terminy-procesowe-pl), lista kontrolna klauzul umownych (klauzule-kontraktowe-pl), cztery kalkulatory procesowe z zywymi parametrami (kalkulatory-procesowe-pl), groundowana ekstrakcja konceptow prawnych warstwa LLM z zakotwiczeniem cytatu do zdania zrodlowego (doc-intel-llm-tier-pl, wymaga contextgem + modelu lokalnego/EOG; backend chmurowy tylko za jawna flaga), audytowalny kontrakt wyjscia OCR {block_type,bbox,text,confidence} z confidence-gatingiem human-in-the-loop, flagami PII pod redakcje i prompt-kontraktem vlm-html dla dowolnego VLM, OCR skanow na CPU (LiteParse) i lokalnym podzialem teczki na pisma (doc-intel-contract-pl, normalizacja zero-dep stdlib). walidacja podpisu elektronicznego w PRZYCHODZACYM PDF - czy plik zmieniono po podpisaniu, kto podpisal, czy podpis obejmuje caly dokument (waliduj-podpis-pdf-pl, pyHanko, wylacznie odczyt - nie podpisuje). Folder akt ze skanow -> tekst z numerami stron, lokalna wyszukiwarka i raport brakow: strony nieczytelne, pliki o identycznej tresci pod roznymi nazwami (akta-przeszukiwalne-pl, OCR na CPU). Rdzen bez konektorow; doc-intel domyslnie lokalny (Ollama).",
-      "version": "1.9.0",
+      "description": "Operacje na dokumentach (12 skilli): konwersja PDF/Office->Markdown (markitdown, opendataloader-pdf), redlining .docx z Track Changes (redline-docx-pl), anonimizacja i pseudonimizacja PII (let-it-be), metodyka terminow procesowych z bramka czlowieka (terminy-procesowe-pl), lista kontrolna klauzul umownych (klauzule-kontraktowe-pl), cztery kalkulatory procesowe z zywymi parametrami (kalkulatory-procesowe-pl), groundowana ekstrakcja konceptow prawnych warstwa LLM z zakotwiczeniem cytatu do zdania zrodlowego (doc-intel-llm-tier-pl, wymaga contextgem + modelu lokalnego/EOG; backend chmurowy tylko za jawna flaga), audytowalny kontrakt wyjscia OCR {block_type,bbox,text,confidence} z confidence-gatingiem human-in-the-loop, flagami PII pod redakcje i prompt-kontraktem vlm-html dla dowolnego VLM, OCR skanow na CPU (LiteParse) i lokalnym podzialem teczki na pisma (doc-intel-contract-pl, normalizacja zero-dep stdlib). walidacja podpisu elektronicznego w PRZYCHODZACYM PDF - czy plik zmieniono po podpisaniu, kto podpisal, czy podpis obejmuje caly dokument (waliduj-podpis-pdf-pl, pyHanko, wylacznie odczyt - nie podpisuje). Folder akt ze skanow -> tekst z numerami stron, lokalna wyszukiwarka i raport brakow: strony nieczytelne, pliki o identycznej tresci pod roznymi nazwami (akta-przeszukiwalne-pl, OCR na CPU). Chronologia akt i zestawienie stanowisk stron z deterministyczna bramka, ktora sprawdza, czy kazdy cytat stoi na wskazanej stronie akt (chronologia-stanowiska-pl). Rdzen bez konektorow; doc-intel domyslnie lokalny (Ollama).",
+      "version": "1.13.0",
       "author": {
         "name": "Wieslaw Mazur / MateMatic"
       },
@@ -43,8 +43,8 @@
     },
     {
       "name": "governance-kancelarii",
-      "description": "Governance AI dla kancelarii (5 skilli): Konstytucja AI, triage AI Act (klasyfikacja + rola + mapa obowiazkow, teraz z deterministycznymi skryptami: klasyfikator ryzyka art. 5/6/50, plan oceny zgodnosci art. 43 + checklista zalacznika IV, tracker obowiazkow wg fazowania art. 113), preflight tajemnicy zawodowej przed wyslaniem tresci do zewnetrznego AI, warsztat decyzyjny Expert Panel, szyfrowany backup Google Workspace (RODO art. 32). Generatory dokumentow, bez konektorow.",
-      "version": "1.2.0",
+      "description": "Governance AI dla kancelarii (6 skilli): Konstytucja AI, triage AI Act (klasyfikacja + rola + mapa obowiazkow, teraz z deterministycznymi skryptami: klasyfikator ryzyka art. 5/6/50, plan oceny zgodnosci art. 43 + checklista zalacznika IV, tracker obowiazkow wg fazowania art. 113), preflight tajemnicy zawodowej przed wyslaniem tresci do zewnetrznego AI, warsztat decyzyjny Expert Panel, szyfrowany backup Google Workspace (RODO art. 32), teczka KYC/AML klienta-spolki: odpis KRS, biala lista VAT, listy sankcyjne ONZ/UE/MSWiA dopasowywane lokalnie, zgodnosc beneficjentow z CRBR, 13 regul bez decyzji za czlowieka (kyc-kancelaria-pl). Generatory dokumentow, bez konektorow; kyc-kancelaria-pl odpytuje publiczne rejestry, wysylajac tylko numer KRS/NIP.",
+      "version": "1.3.1",
       "author": {
         "name": "Wieslaw Mazur / MateMatic"
       },
@@ -54,7 +54,7 @@
     {
       "name": "dev-mcp",
       "description": "Narzedzia deweloperskie MateMatic (4 skille, advanced): spec-driven development, kanon budowy MCP serverow, recenzent PR dla LegalTech AI, generator instalatora marketplace. Bez konektorow.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "Wieslaw Mazur / MateMatic"
       },
@@ -73,8 +73,8 @@
     },
     {
       "name": "jakosc-tresci",
-      "description": "Narzedzia jakosci tekstu polskiego (2 skille): humanizer-pl (usuwa wzorce AI-slop i pisownie sprzed reformy RJP 2026, w tym sygnatury statystyczne wykrywane przez detektory) i marko-pl-content (zrzedliwy senior redaktor, werdykt + zarzuty z plik:linia, w tym pisownia sprzed reformy RJP 2026 ze skanerem). Zmienia slowa, nigdy faktow. Bez konektorow, bez wlasnych polaczen wychodzacych.",
-      "version": "1.2.0",
+      "description": "Narzedzia jakosci tekstu polskiego (2 skille): humanizer-pl (usuwa wzorce AI-slop i pisownie sprzed reformy RJP 2026, minimalna ingerencja z bramka po przepisaniu: daty, kwoty, przepisy, sila normy, terminy prawne) i marko-pl-content (zrzedliwy senior redaktor, werdykt + zarzuty z plik:linia, w tym pisownia sprzed reformy RJP 2026 ze skanerem). Zmienia slowa, nigdy faktow. Bez konektorow, bez wlasnych polaczen wychodzacych.",
+      "version": "1.3.1",
       "author": {
         "name": "Wieslaw Mazur / MateMatic"
       },
@@ -84,7 +84,7 @@
     {
       "name": "ochrona-danych",
       "description": "Operacje RODO i cyber dla kancelarii i IOD (5 skilli): ocena skutkow DPIA (art. 35-36), obsluga naruszenia w 72h (art. 33-34), zadania osob DSAR (art. 12, 15-22), rejestr czynnosci RoPA i przeglad umow powierzenia DPA (art. 30, 28), triage NIS2/KSC (zakres, 10 srodkow art. 21, zegar raportowania). Grounding cytatu decyzji UODO zyje w orzecznictwo-zrodla (uodo-grounding-pl). Ugruntowane w artykulach RODO/NIS2 i wytycznych EROD/UODO. Bez konektorow, bez wlasnych polaczen wychodzacych.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "Wieslaw Mazur / MateMatic"
       },

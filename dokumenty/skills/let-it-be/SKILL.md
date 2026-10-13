@@ -81,16 +81,46 @@ nie wysyla - co idzie do LLM decyduje czlowiek.
 
 ## Bramka "no PII leaves"
 
-Obie komendy po podmianie sprawdzaja, czy zaden oryginal nie przetrwal
-(np. przez fleksje nazwiska). Jezeli cos zostalo - **operacja jest przerywana**
-z kodem wyjscia 2 i komunikatem na stderr, zeby zweryfikowac recznie.
+Obie komendy po podmianie sprawdzaja, czy przetrwal ktorys z **wykrytych**
+oryginalow. Jezeli tak - **operacja jest przerywana** z kodem wyjscia 2
+i komunikatem na stderr, zeby zweryfikowac recznie.
+
+**Czego ta bramka NIE robi.** Liste oryginalow buduje ten sam detektor, ktory
+przetworzyl tekst. Bramka nie zobaczy wiec PII, ktorego detektor nie wykryl.
+Kod wyjscia 0 znaczy "nie znalazlem sladu tego, co wykrylem" - nie znaczy
+"w tekscie nie ma PII". Pomiar z 2026-09-23: na 70 fragmentach bramka nie
+zatrzymala zadnego, a 54,3% wyszlo z niezamaskowanym PII (`ewaluacja/README.md`).
+
+Przy dokumencie, ktory opuszcza kancelarie, kod 0 nie zastepuje przejrzenia
+tekstu przez czlowieka.
 
 ## Ograniczenia (przeczytaj)
 
-- Fleksja: "Kowalski" zlapane, ale "Kowalskiego/Kowalskiemu" w innym miejscu - nie
-  zawsze. Bramka residual to wykryje i zatrzyma; przejrzyj dokument.
-- Imiona: gazetteer ~120 najczestszych. Rzadkie/obce imie moze umknac.
-- Daty urodzenia, paszport, prawo jazdy, PWZ - poza zakresem v0.2.0.
+- Odmiana: nazwisko osoby rozpoznanej z imieniem jest maskowane w calym tekscie
+  (przypadki liczby pojedynczej, wersaliki, bez ogonkow). Umyka nazwisko osoby, ktora nigdy nie
+  stoi przy imieniu. Przejrzyj dokument.
+- Osoby: wersaliki ("JAN KOWALCZYK") i "Nazwisko Imie" przed separatorem tabeli
+  sa wykrywane. Umykaja inicjaly ("M.W."), zdrobnienia i samo imie.
+- Spolki: typowe zapisy formy prawnej sa wykrywane w dowolnej wielkosci liter, a
+  dalsze wystapienia nazwy tej spolki (takze w odmianie) sa maskowane. Umyka
+  dzialalnosc bez formy i nazwa, ktora ani razu nie stoi z forma prawna (recall
+  FIRMA 0,600 na dokumentach B2B). Zmierzony recall: `ewaluacja/README.md`.
+- Imiona: ok. 200 imion z odmiana. Rzadkie/obce imie moze umknac.
+- Numer ze ZLA suma kontrolna (PESEL, NIP, REGON, IBAN) jest maskowany i ma
+  `doPrzegladu: true` (`walidacjaSumy: "failed"`); CLI podaje ich liczbe na stderr.
+  Po etykiecie ("PESEL", "NIP", "REGON") takze przy cyfrze za malo lub za duzo.
+  Bez etykiety: 11 cyfr jako PESEL, 10 cyfr lub 3-3-2-2 jako NIP, 14 cyfr jako
+  REGON - z pewnoscia 0,5, wiec `--min-confidence` powyzej 0,5 je wycina.
+  Przejrzyj oznaczone numery: to moze byc literowka w PESEL albo numer faktury.
+- Ciag 12 i wiecej cyfr bez etykiety NIE jest maskowany. REGON-9 ze zla suma bez
+  etykiety dostaje token PHONE.
+- Kwota bez waluty i groszy w zapisie 3-3-3 ("Razem: 600 700 800") jest brana
+  za telefon. Kwota z groszami, waluta albo dluzsza ("1 152 422 384 zl") - nie.
+- Zapis do pliku (`--out`, `paczka`) jest sprawdzany po zapisie: plik czytany od
+  nowa, oryginaly w tekscie i surowych bajtach, kontrola pozytywna tokenow,
+  ponowna detekcja. BLOKADA usuwa zapisane pliki (kod 2). Wyjscie na stdout nie
+  jest weryfikowane.
+- Daty urodzenia, paszport, prawo jazdy, PWZ - poza zakresem.
 - Adres bez prefiksu ulicy (ul./al./pl./os.) moze umknac.
 - Tryb `.docx` z tracked changes - roadmap v2 (silnik jest tekstowy).
 - To narzedzie wspomaga, **nie zastepuje** weryfikacji przez prawnika.
@@ -110,3 +140,29 @@ const { text } = przywroc(odpowiedzLlm, wznowiony);
 ```
 
 Pelne API i wzorce operacyjne (TTL, szyfrowane archiwum, audit log): [README.md](README.md).
+
+<!-- shared-rules:begin (wygenerowane z ../../SHARED-RULES.md przez scripts/shared-rules-sync.py - nie edytuj tutaj) -->
+## Wspólne reguły wtyczki dokumenty (Dokumenty)
+
+Te reguły obowiązują w każdym skillu tej wtyczki, także gdy sam skill milczy. Są skopiowane do każdego skilla, więc działają zarówno po instalacji całej wtyczki, jak i pojedynczego skilla.
+
+Plugin obsługuje dokumenty: konwersję do Markdown, redlining .docx i anonimizację danych osobowych. Część operacji dotyka danych wrażliwych, więc reguła ochrony danych jest tu pierwsza.
+
+### Ochrona danych
+
+- **Anonimizacja przed wysyłką** - gdy dokument zawiera dane osobowe, oczyść je lokalnie (skill `let-it-be`), zanim treść trafi do modelu. Dane osobowe nie powinny wychodzić do API. To zasada minimalizacji (RODO).
+- **Metadane przy wysyłce** - redlining .docx czyści też metadane autora; sprawdź je przed przekazaniem pliku na zewnątrz.
+- **Próg poufności** - materiał objęty tajemnicą lub szczególnie wrażliwy oceniaj osobno, czy w ogóle wnosić do narzędzia. Przy wątpliwości nie przekazuj.
+
+### Operacje nieodwracalne
+
+Niektóre operacje są nieodwracalne (anonimizacja w trybie nieodwracalnym, zaakceptowanie wszystkich zmian w .docx). Skille oznaczają je jawnie - wykonuj je dopiero po potwierdzeniu przez człowieka.
+
+### Bramka człowieka
+
+Wynik to projekt. Nic nie zostaje wysłane ani złożone, zanim sprawdzi to uprawniony człowiek. Plugin przygotowuje plik, nie wykonuje aktu wysyłki.
+
+### Zakres pluginu
+
+Plugin daje narzędzia na dokumentach (konwersja, redline, anonimizacja, akta i chronologia). Nie ocenia treści prawnej. Weryfikację cytatu wobec źródła prawa daje plugin „fundament weryfikacyjny”; `chronologia-stanowiska-pl` sprawdza tylko, czy cytat stoi na wskazanej stronie akt.
+<!-- shared-rules:end -->
