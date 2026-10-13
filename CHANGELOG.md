@@ -5,6 +5,24 @@ Wszystkie istotne zmiany w hubie sa odnotowywane w tym pliku.
 Format zgodny z [Keep a Changelog 1.1.0](https://keepachangelog.com/pl/1.1.0/).
 Wersjonowanie: CalVer dla calego hubu (`YYYY.MM.DD`), SemVer per-skill.
 
+## [2026.10.13] - 2026-10-13
+
+### Added
+
+- `chronologia-stanowiska-pl` 0.2.0 (`dokumenty` 1.12.0) - bramka lokatorow dostaje trzy
+  mechanizmy:
+  - **odcisk akt** (`akta_odcisk`): wynik niesie skrot tekstu akt, na ktorym powstal.
+    Gdy tekst sie zmieni (ponowny OCR, dolozony plik), bramka wskazuje plik zamiast
+    sprawdzac nowa wersje po cichu. Skrot liczony z tekstu, nie z PDF - ponowny OCR
+    tego samego PDF zmienia tekst, a skrot PDF zostaje ten sam;
+  - **nieocenione to nie pusto**: brak pola listy (np. `dowody_przeciw`) = nie oceniono,
+    `[]` = sprawdzono i nic nie ma;
+  - **`--profil sad`**: przed pismem do sadu nazwane watpliwosci (nieznana wersja akt,
+    nieoceniona komorka, nieczytelna strona, fakt spoza akt) blokuja zamiast ostrzegac.
+  16 nowych testow widzianych najpierw na czerwono; wylaczenie ktoregokolwiek
+  mechanizmu wywraca testy. Pomysly (bez kodu) z `legal-abduction` w
+  GSkuza/AI-Legal-SkillsPL - zrodlo w NOTICE skilla.
+
 ## [2026.10.10d] - 2026-10-10
 
 ### Fixed

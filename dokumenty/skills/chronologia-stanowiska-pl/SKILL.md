@@ -33,7 +33,7 @@ attribution:
     note: skille chronology-builder i pleadings-analyst, commit 20fbad1
 metadata:
   author: Wieslaw Mazur / MateMatic
-  version: 0.1.1
+  version: 0.2.0
   license: Apache-2.0
   cost: bramka bez LLM i bez sieci (stdlib); budowa wpisów - model w sesji
   companion_skills: akta-przeszukiwalne-pl, citation-grounding-pl, adversarial-legal-review-pl
@@ -155,17 +155,35 @@ Zestawienie: `"rodzaj": "zestawienie"`, lista `elementy` z polami `id, element,
 twierdzenia, stanowisko_przeciwnika, zrodla_stanowiska, dowody_za, dowody_przeciw, stan`.
 Wzory: `tests/fixtures/chronologia.json`, `tests/fixtures/zestawienie.json`.
 
+**Pusta lista a brak pola - to dwie różne odpowiedzi.** `"dowody_przeciw": []` znaczy
+„sprawdziłem akta, nic nie ma”. Pominięte pole znaczy „nie oceniałem” - bramka da UWAGI
+(NA01). Nie pomijaj pola, jeśli go nie sprawdziłeś: wpisz to w `uwagi` i zostaw pole
+nieobecne, żeby brak oceny był widoczny, a nie udawał ustalenia.
+
+**Odcisk akt.** Do nagłówka wyniku wpisz `"akta_odcisk"`: skróty tekstu akt, na którym
+budowałeś. Pierwsze uruchomienie bramki bez tego pola daje UWAGI (OD01), a w raporcie
+`*.bramka.md` jest gotowy blok `akta_odcisk` do wklejenia. Gdy później tekst akt się
+zmieni (ponowny OCR, dołożony plik), bramka powie, który plik (OD02) - przejrzyj wtedy
+wpisy z tego pliku, zanim ich użyjesz. Odcisk liczy się z tekstu `.txt`, nie z PDF:
+ponowny OCR tego samego PDF zmienia tekst, a skrót PDF zostaje ten sam.
+
 Uruchom bramkę OSOBNO (nie przez `&&` ani `|`, bo potok gubi kod wyjścia):
 
 ```bash
 python scripts/bramka_lokatorow.py chronologia.json akta-tekst --csv chronologia.csv
 ```
 
+Przed użyciem wyniku w piśmie do sądu uruchom ją jeszcze raz z `--profil sad`. W tym
+profilu nieznana albo zmieniona wersja akt (OD01-OD03), nieoceniona komórka (NA01),
+cytat ze strony nieczytelnej (ZR05) albo zgodny tylko bez polskich znaków (ZR07) oraz
+fakt spoza akt (ZR11, ZR12) to BLOKADA, a nie UWAGI. Pozostałe uwagi (np. data
+przybliżona) zostają uwagami - profil zaostrza nazwaną listę kodów, nie wszystko.
+
 | Kod | Stan | Co robisz |
 |---|---|---|
 | 0 | OK | każdy wpis zakotwiczony; wolno pokazać wynik |
-| 10 | UWAGI | strona nieczytelna, cytat zgodny tylko bez polskich znaków, fakt spoza akt (także z kotwicą), data niepewna albo wyznaczona, `wniosek` bez uzasadnienia, ponad połowa wpisów kluczowa - pokaż, ale z listą wpisów do sprawdzenia w oryginale |
-| 20 | BLOKADA | cytatu nie ma na wskazanej stronie, brak pliku, zła data, pusta lista - **popraw wpisy i uruchom ponownie**; nie pokazuj wyniku jako gotowego |
+| 10 | UWAGI | strona nieczytelna, cytat zgodny tylko bez polskich znaków, fakt spoza akt (także z kotwicą), data niepewna albo wyznaczona, `wniosek` bez uzasadnienia, ponad połowa wpisów kluczowa, brak lub niezgodny odcisk akt, nieoceniona komórka - pokaż, ale z listą wpisów do sprawdzenia w oryginale |
+| 20 | BLOKADA | cytatu nie ma na wskazanej stronie, brak pliku, zła data, pusta lista, odcisk złego kształtu; w profilu `sad` także kody z listy wyżej - **popraw wpisy i uruchom ponownie**; nie pokazuj wyniku jako gotowego |
 
 Przy kodzie ZR08 raport podaje stronę, na której cytat naprawdę stoi - popraw lokator,
 nie cytat. Przy ZR09 cytat bywa zgodny z papierem, ale nie z OCR (np. „Sp. z o.o.”
@@ -233,7 +251,9 @@ struktura chronologii, postawa tajemnicy i wariant stanu faktycznego - claude-fo
 kotwica każdego wpisu w dokumencie i bramka użycia materiału - Andrew Bird; pasmo
 pewności i rozdzielenie dat - lq-skills i Rohas Nagpal; mapa twierdzenie / stanowisko /
 dowód - claim-chart i pleadings-analyst. Własne: bramka lokatorów (deterministyczna
-kontrola cytatu na stronie akt) i spięcie z lokalnym OCR akt.
+kontrola cytatu na stronie akt) i spięcie z lokalnym OCR akt. Od 0.2.0 trzy pomysły
+(nie kod) z `legal-abduction` w GSkuza/AI-Legal-SkillsPL: wynik związany z wersją
+tekstu akt, brak oceny odróżniony od pustej listy, osobny profil bramki do sądu.
 
 <!-- shared-rules:begin (wygenerowane z ../../SHARED-RULES.md przez scripts/shared-rules-sync.py - nie edytuj tutaj) -->
 ## Wspólne reguły wtyczki dokumenty (Dokumenty)

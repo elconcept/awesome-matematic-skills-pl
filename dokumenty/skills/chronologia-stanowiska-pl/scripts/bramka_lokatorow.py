@@ -9,23 +9,36 @@ Kod wyjscia: 0 = OK, 10 = UWAGI, 20 = BLOKADA. Pusta lista wpisow = BLOKADA.
 Na ekran trafiaja wylacznie liczby i identyfikatory wpisow; tresc akt zostaje
 w pliku raportu obok pliku JSON.
 
+Od v0.2.0:
+- odcisk akt: wynik niesie `akta_odcisk` {plik: sha256 tekstu}; zmiana tekstu akt po
+  budowie wyniku (np. ponowny OCR) nie przechodzi po cichu (OD01-OD04),
+- nieocenione != pusto: pole listy nieobecne = nie oceniono (NA01), `[]` = sprawdzono,
+- `--profil sad`: watpliwosci, ktore w pracy roboczej sa UWAGAMI, przed sadem blokuja.
+
 Uzycie:
-  python bramka_lokatorow.py WYNIK.json AKTA_TEKST_DIR [--csv OUT.csv]
+  python bramka_lokatorow.py WYNIK.json AKTA_TEKST_DIR [--csv OUT.csv] [--profil robocza|sad]
 """
 from __future__ import annotations
 
 import argparse
 import csv
 import datetime as dt
+import hashlib
 import json
 import re
 import sys
 import unicodedata
 from pathlib import Path
 
-WERSJA = "0.1.1"
+WERSJA = "0.2.0"
 OK, UWAGI, BLOKADA = 0, 10, 20
 NAZWA_STANU = {OK: "OK", UWAGI: "UWAGI", BLOKADA: "BLOKADA"}
+
+# Kody, ktore w profilu "sad" przechodza z UWAG w BLOKADE. Lista jawna, nie "wszystko":
+# do pisma nie idzie wynik z nieznanej wersji akt, nieoceniona komorka, cytat ze strony
+# nieczytelnej albo zgodny tylko bez ogonkow, ani fakt spoza akt.
+ZAOSTRZANE_W_SADZIE = {"OD01", "OD02", "OD03", "NA01", "ZR05", "ZR07", "ZR11", "ZR12"}
+SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 
 PAGE_RE = re.compile(r"^===== (?:strona|page|página) (\d+) =====$", re.M)
 NIECZYTELNA = "[STRONA NIECZYTELNA"
@@ -78,6 +91,19 @@ def wczytaj_akta(katalog: Path) -> dict[str, dict[int, str]]:
     return akta
 
 
+def odcisk_akt(katalog: Path) -> dict[str, str]:
+    """sha256 TEKSTU kazdego pliku akt (konce linii ujednolicone do LF).
+
+    Nie skrot PDF z naglowka akta.py: ponowny OCR tego samego PDF zmienia tekst,
+    a skrot PDF zostaje ten sam - a cytaty sprawdzamy wlasnie na tekscie.
+    """
+    wynik: dict[str, str] = {}
+    for p in sorted(katalog.glob("*.txt")):
+        tekst = p.read_bytes().decode("utf-8", errors="replace").replace("\r\n", "\n")
+        wynik[p.stem.lower()] = hashlib.sha256(tekst.encode("utf-8")).hexdigest()
+    return wynik
+
+
 def _klucz_pliku(nazwa: str) -> str:
     n = Path(str(nazwa)).name
     for ext in (".txt", ".pdf"):
@@ -91,9 +117,19 @@ def _klucz_pliku(nazwa: str) -> str:
 class Wynik:
     def __init__(self) -> None:
         self.znaleziska: list[tuple[int, str, str, str]] = []  # (stan, id, kod, opis)
+        self.uzyte_pliki: set[str] = set()  # pliki akt wskazane przez zrodla wyniku
 
     def dodaj(self, stan: int, wid: str, kod: str, opis: str) -> None:
         self.znaleziska.append((stan, wid, kod, opis))
+
+    def zaostrz(self, kody: set[str]) -> int:
+        """Profil sad: UWAGI z podanymi kodami -> BLOKADA. Zwraca liczbe zaostrzonych."""
+        n = 0
+        for i, (s, wid, kod, opis) in enumerate(self.znaleziska):
+            if s == UWAGI and kod in kody:
+                self.znaleziska[i] = (BLOKADA, wid, kod, opis + " [profil sad]")
+                n += 1
+        return n
 
     def stan_wpisu(self, wid: str) -> int:
         return max([s for s, i, _, _ in self.znaleziska if i == wid], default=OK)
@@ -108,6 +144,7 @@ def sprawdz_zrodlo(z: dict, akta: dict, wid: str, w: Wynik, pole: str) -> None:
         w.dodaj(BLOKADA, wid, "ZR01", f"{pole}: brak pliku albo strony")
         return
     klucz = _klucz_pliku(plik)
+    w.uzyte_pliki.add(klucz)
     if klucz not in akta:
         w.dodaj(BLOKADA, wid, "ZR02", f"{pole}: pliku '{klucz}' nie ma w tekscie akt")
         return
@@ -221,6 +258,10 @@ def sprawdz_zestawienie(dane: dict, akta: dict, w: Wynik) -> list[dict]:
             w.dodaj(BLOKADA, wid, "SC03", "puste pole 'element'")
         _enum(el, "stan", wid, w)
         _enum(el, "stanowisko_przeciwnika", wid, w)
+        for pole in ("twierdzenia", "dowody_za", "dowody_przeciw"):
+            if pole not in el:
+                w.dodaj(UWAGI, wid, "NA01", f"pole '{pole}' nieobecne = nieocenione "
+                        "(pusta lista [] znaczy: sprawdzono, nic nie ma)")
         for pole in ("twierdzenia", "zrodla_stanowiska", "dowody_za", "dowody_przeciw"):
             for i, z in enumerate(el.get(pole) or []):
                 sprawdz_zrodlo(z, akta, wid, w, f"{pole}[{i}]")
@@ -233,6 +274,34 @@ def sprawdz_zestawienie(dane: dict, akta: dict, w: Wynik) -> list[dict]:
                 and not el.get("zrodla_stanowiska"):
             w.dodaj(BLOKADA, wid, "ST03", "stanowisko przeciwnika podane bez wskazania pisma, z ktorego wynika")
     return elementy
+
+
+def sprawdz_odcisk(dane: dict, aktualny: dict[str, str], w: Wynik) -> str:
+    """Porownuje `akta_odcisk` wyniku z biezacym tekstem akt. Zwraca krotki stan do wydruku."""
+    zadeklarowany = dane.get("akta_odcisk")
+    if zadeklarowany is None:
+        w.dodaj(UWAGI, "naglowek", "OD01", "brak pola 'akta_odcisk' - nie da sie wykazac, na jakiej "
+                "wersji tekstu akt zbudowano wynik (odcisk do wpisania jest w tym raporcie)")
+        return "brak"
+    if not isinstance(zadeklarowany, dict) or not zadeklarowany \
+            or not all(isinstance(v, str) and SHA_RE.match(v) for v in zadeklarowany.values()):
+        w.dodaj(BLOKADA, "naglowek", "OD04", "'akta_odcisk' musi byc niepustym obiektem {plik: sha256 (64 znaki hex)}")
+        return "zly"
+    zadeklarowany = {_klucz_pliku(k): v for k, v in zadeklarowany.items()}
+    rozne = 0
+    for plik, sha in sorted(zadeklarowany.items()):
+        if plik not in aktualny:
+            w.dodaj(UWAGI, "naglowek", "OD02", f"plik '{plik}' z odcisku nie istnieje juz w tekscie akt")
+            rozne += 1
+        elif aktualny[plik] != sha:
+            w.dodaj(UWAGI, "naglowek", "OD02", f"tekst pliku '{plik}' zmienil sie od budowy wyniku "
+                    "(np. ponowny OCR) - lokatory sprawdzono na NOWEJ wersji; przejrzyj wpisy z tego pliku")
+            rozne += 1
+    for plik in sorted(w.uzyte_pliki - set(zadeklarowany)):
+        if plik in aktualny:
+            w.dodaj(UWAGI, "naglowek", "OD03", f"plik '{plik}' jest wskazany w zrodlach, ale nie ma go w odcisku")
+            rozne += 1
+    return "zgodny" if not rozne else f"rozny ({rozne})"
 
 
 # --- eksport CSV ---------------------------------------------------------
@@ -281,6 +350,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("wynik", type=Path, help="plik JSON z chronologia albo zestawieniem")
     ap.add_argument("akta", type=Path, help="katalog tekstu akt (wynik akta-przeszukiwalne-pl)")
     ap.add_argument("--csv", type=Path, help="eksport do CSV (komorki zneutralizowane przed formulami)")
+    ap.add_argument("--profil", choices=("robocza", "sad"), default="robocza",
+                    help="robocza (domyslnie): watpliwosci = UWAGI; sad: kody z ZAOSTRZANE_W_SADZIE = BLOKADA")
     a = ap.parse_args(argv)
 
     w = Wynik()
@@ -312,19 +383,27 @@ def main(argv: list[str] | None = None) -> int:
     for d in {x for x in ids if ids.count(x) > 1}:
         w.dodaj(BLOKADA, d, "SC04", "zdublowany identyfikator wpisu")
 
+    aktualny_odcisk = odcisk_akt(a.akta)
+    stan_odcisku = sprawdz_odcisk(dane, aktualny_odcisk, w)
+    zaostrzone = w.zaostrz(ZAOSTRZANE_W_SADZIE) if a.profil == "sad" else 0
+
     stany = [w.stan_wpisu(i) for i in ids]
     globalny = max([s for s, *_ in w.znaleziska], default=OK)
 
     raport = a.wynik.with_suffix(".bramka.md")
     linie = [f"# Bramka lokatorow v{WERSJA} - {a.wynik.name}", "",
-             f"Rodzaj: {rodzaj}. Akta: {len(akta)} plikow, {sum(len(s) for s in akta.values())} stron.",
+             f"Rodzaj: {rodzaj}. Profil: {a.profil}. Akta: {len(akta)} plikow, {sum(len(s) for s in akta.values())} stron.",
              f"Mianownik: {len(rekordy)} = {stany.count(OK)} OK + {stany.count(UWAGI)} UWAGI + {stany.count(BLOKADA)} BLOKADA",
+             f"Odcisk akt: {stan_odcisku}" + (f"; zaostrzone w profilu sad: {zaostrzone}" if a.profil == "sad" else ""),
              f"STAN: {NAZWA_STANU[globalny]}", "", "| stan | wpis | kod | opis |", "|---|---|---|---|"]
     for s, wid, kod, opis in sorted(w.znaleziska, key=lambda x: (-x[0], x[1])):
         linie.append(f"| {NAZWA_STANU[s]} | {wid} | {kod} | {opis.replace('|', '/')} |")
+    linie += ["", "## Odcisk biezacego tekstu akt", "",
+              "Wpisz do wyniku jako `akta_odcisk`, gdy budujesz go na tej wersji akt:", "",
+              "```json", json.dumps({"akta_odcisk": aktualny_odcisk}, ensure_ascii=False, indent=2), "```"]
     raport.write_text("\n".join(linie) + "\n", encoding="utf-8")
 
-    print(f"bramka lokatorow v{WERSJA}: {rodzaj}, akta {len(akta)} plikow")
+    print(f"bramka lokatorow v{WERSJA}: {rodzaj}, profil {a.profil}, akta {len(akta)} plikow, odcisk {stan_odcisku}")
     print(f"Mianownik: {len(rekordy)} = {stany.count(OK)} OK + {stany.count(UWAGI)} UWAGI + {stany.count(BLOKADA)} BLOKADA")
     for s in (BLOKADA, UWAGI):
         dot = sorted({wid for st, wid, *_ in w.znaleziska if st == s})

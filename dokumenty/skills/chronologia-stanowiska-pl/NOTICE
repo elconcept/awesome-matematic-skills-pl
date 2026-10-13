@@ -55,6 +55,13 @@ zadnej z nich; wzorce i struktura zostaly przejete i zmienione.
    status wpisu (dowod, relacja, twierdzenie strony, ustalenie sadu), klasyfikacja
    stanowiska przeciwnika (przyznanie, zaprzeczenie, brak stanowiska).
 
+Inspiracja bez kodu (od 0.2.0): GSkuza/AI-Legal-SkillsPL, skill legal-abduction,
+commit 39c91dd7de103c0c123809121ec6324cac69d126. Repozytorium bez pliku licencji,
+wiec nie przejeto zadnego kodu ani tekstu - wylacznie trzy idee, zaimplementowane od
+zera: wynik zwiazany z wersja tekstu akt (u nas: akta_odcisk, sha256 tekstu), brak
+oceny odrozniony od pustej listy (u nas: NA01), osobny, ostrzejszy profil bramki
+(u nas: --profil sad).
+
 Wlasne (MateMatic): scripts/bramka_lokatorow.py - deterministyczna kontrola, czy
 cytat stoi na wskazanej stronie akt, trojstan OK/UWAGI/BLOKADA z pelnym mianownikiem;
 spiecie z lokalnym OCR akt (akta-przeszukiwalne-pl); fikcyjne akta testowe.
