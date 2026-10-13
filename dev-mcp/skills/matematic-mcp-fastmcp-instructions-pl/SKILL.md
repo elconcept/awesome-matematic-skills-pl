@@ -217,6 +217,87 @@ Anty-wzorzec, ktory to unaocznil: anydoc liczy poprawny mianownik
 **nigdzie nie rejestruje** - konsument dostaje `Ok` i niepelny dokument.
 Zdarzenie niepelnosci ma isc TA SAMA droga co wynik, nie kanalem obok.
 
+**6b. Kod niesie tez „czy ponawiac" - i tabela mieszka przy zrodle (2026-10-06).**
+Sam stabilny `code` nie mowi agentowi, co zrobic. Pod jednym statusem (np. 429) siedza
+sytuacje przeciwne: limit na minute warto ponowic za 60 s, limit dobowy - dopiero jutro,
+limit zyciowy - nigdy. Klient ponawiajacy kazde 429 wali wtedy w limit dobowy w petli.
+Dlatego kazdy kod dostaje w JEDNEJ tabeli: status HTTP, `retryable` i okno odnowienia,
+a odpowiedz niesie `retryable` + `retry_after_s` (i naglowek `Retry-After` w HTTP).
+
+```python
+KODY = {  # jedna tabela, przy miejscu, gdzie kody sie rodza
+    "rate_limited":         {"http": 429, "okno": "minuta"},   # retryable, 60 s
+    "quota_daily":          {"http": 429, "okno": "doba"},     # nie dzis, Retry-After do polnocy
+    "quota_total":          {"http": 429, "okno": None},       # nigdy
+    "upstream_unavailable": {"http": 503, "okno": "minuta"},   # timeout / 5xx zrodla
+    "invalid_input":        {"http": 400, "okno": None},
+}
+```
+
+Test ma porownac tabele ze ZRODLEM w obie strony (kod uzyty w kodzie, a nieobecny w tabeli
+= czerwien; wpis w tabeli, ktorego kod nie uzywa = czerwien) i sprawdzic status, `retryable`
+i `Retry-After` na prawdziwej sciezce odpowiedzi. Lustro „przepisane ze zrodla" bez takiego
+testu gnije: reczna lista 4 powodow odmowy przy 13 w zrodle, a limit dobowy wracal przez REST
+jako HTTP 200 (zmierzone 2026-10-06, z kontrola pozytywna parsera i mutantem). Wzorzec z
+helixdb/helix-db (Apache-2.0, idea): `QueryErrorCode` + klasa bledu -> (HTTP, retryable) +
+test tabelaryczny + diff tabeli w docs z enumem. `commit_outcome_unknown` = 503 i NIE
+ponawiaj: gdy nie wiadomo, czy zapis sie utrwalil, ponowienie moze go zdublowac.
+
+**6c. Czyja wina, cicha awaria zrodla i wynik czesciowy, ktory mowi, jak go uzupelnic (2026-10-13).**
+Szesc regul wyniesionych z ocen trzech cudzych konektorow PL (leniwyposel/sejm-mcp,
+PawelHaracz/polish-caselaw-mcp, soba-labs/krs-mcp), przepisanych od zera i sprawdzonych na pieciu
+naszych konektorach (ELI Sejmu, SAOS, CBOSA, ISAP, KRS) testem czerwonym najpierw oraz przebiegiem
+na zywym zrodle.
+
+1. **Os `fault` w tabeli kodow.** Kazdy wpis 6b dostaje czyja wine: `caller` (przeformuluj
+   pytanie / popraw parametr), `upstream` (czekaj albo zglos czlowiekowi), `network` (ponow
+   pozniej), `server` (zglos blad konektora). Ten sam kod moze niesc inna wine w instancji:
+   timeout to `upstream_unavailable` z `fault: network`, 5xx - z `fault: upstream`. Wyjatek
+   spoza zrodla (bug w formatterze) to osobny kod `internal_error` z `fault: server` - nigdy
+   „blad komunikacji, sprobuj ponownie", bo agent ponawia wtedy wlasny bug.
+2. **`forbidden` = przeglad czlowieka.** 401/403 zrodla: `retryable: false`, zero ponowien w
+   petli, zero automatycznego obchodzenia nowych zabezpieczen (rotacja naglowkow, generowane
+   tokeny frontendu, nieudokumentowane endpointy). Jedno zdanie o tym w AGENTS.md konektora.
+3. **Status 200 nie znaczy „dane".** Zrodla publiczne oddaja HTTP 200 z czyms, co danymi nie
+   jest: strone zapory „Request Rejected" (WAF przed API Sejmu), strone „Przerwa techniczna"
+   (SAOS), pusta odpowiedz dla aktu bez wersji HTML. Sprawdz `content-type` PRZED parsowaniem i
+   daj nazwany kod (`upstream_blocked`, `upstream_maintenance`, `upstream_shape`,
+   `format_unavailable`) zamiast bledu parsera. Na endpointach, ktore SLUSZNIE oddaja HTML,
+   typ nie wystarczy - patrz na sygnature tresci. Nieznany ksztalt JSON to `upstream_shape`,
+   nigdy `[]`. Do cache trafia wylacznie odpowiedz po kontroli typu i ksztaltu.
+4. **Wynik czesciowy mowi „jak uzupelnic".** `partial_result` to trzy zdania - dlaczego, czego
+   brakuje (z mianownikiem), jak uzupelnic - plus `coverage`. Kilka powodow laczy sie w jedno
+   pole. Odpowiedz tekstowa ZACZYNA SIE od „Wynik niepelny: ...", bo slaby model czyta poczatek,
+   nie pola na koncu. Porazka pobrania czesci danych to „nie sprawdzono", nigdy „sprawdzono -
+   brak" (anty-wzorzec: `catch { return null }` w petli skanu, a wynik liczy tylko sukcesy).
+5. **Ponawianie tylko przy `retryable: true`, przez wspolny hamulec.** Jeden hamulec na proces
+   (nie na klienta, bo narzedzie tworzy nowego klienta przy kazdym wywolaniu): przy 429/5xx/sieci
+   odstep miedzy zapytaniami rosnie x2 (0,25 -> 2 s), po sukcesie maleje o polowe; do 3 prob;
+   `Retry-After` honorowany z sufitem (30 s) i budzetem czekania na wywolanie - ponad budzet
+   oddaj blad z `retry_after_s`, nie wisz. Status ostatniej odpowiedzi zostaje w bledzie.
+6. **Test zywy z pelnym mianownikiem.** Slownik przypadkow zywych z kluczem = nazwa narzedzia
+   i test offline (w CI), ze lista narzedzi z `tools/list` == klucze (pusta lista = BLOKADA).
+   Same wywolania zywe poza CI. Pilot zaplacil od razu: narzedzie bez przypadku zywego okazalo
+   sie zepsute na zywym zrodle (globalny `Accept: application/json` dawal 406 na endpoincie HTML).
+
+```python
+KODY = {  # 6b + os fault (6c)
+    "not_found":            Kod(fault="caller",   retryable=False, co_zrobic="..."),
+    "rate_limited":         Kod(fault="upstream", retryable=True,  co_zrobic="odczekaj retry_after_s"),
+    "upstream_unavailable": Kod(fault="upstream", retryable=True,  co_zrobic="ponow raz pozniej"),
+    "forbidden":            Kod(fault="upstream", retryable=False, co_zrobic="zglos czlowiekowi"),
+    "upstream_maintenance": Kod(fault="upstream", retryable=False, co_zrobic="powiedz o przerwie"),
+    "upstream_shape":       Kod(fault="upstream", retryable=False, co_zrobic="to NIE jest brak wynikow"),
+    "internal_error":       Kod(fault="server",   retryable=False, co_zrobic="zglos blad konektora"),
+}
+# komunikat: "[kod] co sie stalo (fault=..., retryable=..., retry_after_s=..., status=...). Co zrobic: ..."
+```
+
+Bramka: test 6b w obie strony obejmuje WSZYSTKIE pliki, w ktorych kody sie rodza (klient HTTP
+i narzedzia), nie tylko plik serwera - kod rzucany przez zmienna (`kod = "a" if ... else "b"`)
+jest dla regexu niewidoczny, wiec kody pisz literalami. Kontrola pozytywna: mutant literalu
+kodu ma dac czerwien w obu kierunkach.
+
 ### 7. Allowlista atrybutow na granicy emisji telemetrii
 
 Element 4 kaze wpisywac do spanu `org_id` i `user_id`. Element 7 pilnuje, zeby to

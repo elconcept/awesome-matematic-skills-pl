@@ -5,6 +5,19 @@ Wszystkie istotne zmiany w hubie sa odnotowywane w tym pliku.
 Format zgodny z [Keep a Changelog 1.1.0](https://keepachangelog.com/pl/1.1.0/).
 Wersjonowanie: CalVer dla calego hubu (`YYYY.MM.DD`), SemVer per-skill.
 
+## [2026.10.13e] - 2026-10-13
+
+### Added
+
+- `matematic-mcp-fastmcp-instructions-pl` (`dev-mcp`): kanon 6b (kod niesie `retryable` i
+  okno odnowienia, tabela przy zrodle, test w obie strony) wraca do huba z kopii roboczej, plus
+  nowa sekcja **6c**: os `fault` (caller / upstream / network / server), `internal_error` dla
+  bledu konektora, `forbidden` = przeglad czlowieka, HTTP 200 z nie-danymi (zapora, przerwa
+  techniczna, pusta odpowiedz) jako nazwany kod, `partial_result` z „jak uzupelnic" i zdaniem
+  „Wynik niepelny" na czele odpowiedzi, wspolny hamulec klienta i test zywy z pelnym
+  mianownikiem. Wzorce z ocen leniwyposel/sejm-mcp, PawelHaracz/polish-caselaw-mcp i
+  soba-labs/krs-mcp (idea, kod od zera). Wtyczka `dev-mcp` 1.1.0 -> 1.2.0.
+
 ## [2026.10.13d] - 2026-10-13
 
 ### Fixed
